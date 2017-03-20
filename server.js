@@ -6,6 +6,10 @@ var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 
+// Route requires
+var index = require('./routes/index');
+var api = require('./routes/api');
+
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -13,22 +17,33 @@ app.use(bodyParser.json());
 
 var port = process.env.PORT || 8080;        // set our port to 8080
 
-// ROUTES FOR OUR API
+// ROUTE SETUP
 // =============================================================================
-var router = express.Router();              // get an instance of the express Router
+app.use('/', index);
+app.use('/api', api);
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/', function(req, res) {
-    res.json({ message: 'Welcome to the sales api' });   
+
+// ERROR HANDLING
+// =============================================================================
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
 
-// more routes for our API will happen here
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
-app.use('/api', router);
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 
 // START THE SERVER
 // =============================================================================
-app.listen(port);
 console.log('Starting sales server on port ' + port);
+module.exports = app;

@@ -1,6 +1,9 @@
 {
-	"name": "sales-api",
+	"name": "sales",
 	"main": "server.js",
+	"scripts": {
+	  "start": "node ./bin/www"
+	},
 	"dependencies": {
 		"express": "~4.0.0",
 		"body-parser": "~1.0.1"
