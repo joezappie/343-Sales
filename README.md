@@ -45,7 +45,7 @@ Alright so that was pretty cool, it installed everything I outlined in package.j
 Next all we need to do is start up the server
 
 ```
-node server.js
+npm start
 ```
 
 Now open up a new browser (if you're in a VM, a browser on your local machine will only work if you forward the port) and go to http://localhost:8080/api
