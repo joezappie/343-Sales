@@ -41,6 +41,8 @@ cd 343-Sales
 npm install
 ```
 
+Create a copy of `config.json.default` file and rename the copy to `config.json` then open it up and fill in the correct values
+
 Alright so that was pretty cool, it installed everything I outlined in package.json
 Next all we need to do is start up the server
 
