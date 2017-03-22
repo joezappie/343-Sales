@@ -1,0 +1,8 @@
+{
+	"mysqlConfig" : {
+		"host" : "",
+		"user" : "",
+		"password" : "",
+		"database" : ""
+	}
+}
