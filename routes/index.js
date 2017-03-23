@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 		var1: "this is the first var",
 		var2: "here is another var"
 	};
-	res.json('index', { title: 'Express' });
+	res.json(stuff);
 });
 
 module.exports = router;
