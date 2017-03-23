@@ -1,0 +1,8 @@
+{
+	"mysqlConfig" : {
+		"host" : "localhost",
+		"user" : "YOUR-USERNAME",
+		"password" : "YOUR-PASSWORD",
+		"database" : "sales"
+	}
+}
