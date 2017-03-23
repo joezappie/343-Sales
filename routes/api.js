@@ -11,4 +11,20 @@ router.get('/', function(req, res, next) {
 	res.json(message);
 });
 
+/* GET order information */
+router.get('/order',function(req,res,next) {
+	//int : Id of the order
+	var oderId = req.param('orderId');
+	//bool : if the billing info should be returned
+	var paymentInfo = req.param('paymentInfo');
+	//bool : if the shipping info should be returned
+	var shippingInfo = req.param('shippingInfo');
+	//bool : if the customer info should be returned
+	var customerInfo = req.param('customerInfo');
+	//bool : if the list of items should be returned
+	var items = req.param('items');
+
+	res.json({orders : [{id:orderId}]});
+});
+
 module.exports = router;
