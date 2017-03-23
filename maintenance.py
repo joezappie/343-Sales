@@ -88,7 +88,10 @@ def createDatabase():
 			break
 		
 	# Create the database
-	os.system(generateMysqlCommand("CREATE DATABASE " + dbName))    
+	os.system(generateMysqlCommand("CREATE DATABASE " + dbName)) 
+
+	# Allow root to access database   
+	os.system(generateMysqlCommand("GRANT ALL ON " + dbName + ".* TO '" + mysqlUser + "'@'%'"))
 	pressAnyKey()
 	
 def dropDatabase():
