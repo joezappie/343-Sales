@@ -143,6 +143,7 @@ def createUpstartFile(name, directory, port):
 	upstartScript += "\n"
 	upstartScript += "start on filesystem and started networking\n"
 	upstartScript += "respawn\n"
+	upstartScript += "post-stop exec sleep 5\n"
 	upstartScript += "chdir " + directory + "\n" 
 	upstartScript += "env NODE_ENV=production\n"
 	upstartScript += "env PORT=" + str(port) + "\n"
