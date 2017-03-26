@@ -14,6 +14,7 @@ var database = [
 			"firstName": "john",
 			"lastName": "doe",
 			"address": "1111 street",
+			"city": "Rochester",
 			"zip": "14586",
 			"state": "NY"
 		},
@@ -21,6 +22,7 @@ var database = [
 			"firstName": "john",
 			"lastName": "doe",
 			"address": "1111 street",
+			"city": "Rochester",
 			"zip": "14586",
 			"state": "NY",
 			"ccLastFourDigets": "1234"
@@ -61,6 +63,7 @@ var database = [
 			"firstName": "john",
 			"lastName": "doe",
 			"address": "1111 street",
+			"city": "Rochester",
 			"zip": "14586",
 			"state": "NY"
 		},
@@ -68,6 +71,7 @@ var database = [
 			"firstName": "john",
 			"lastName": "doe",
 			"address": "1111 street",
+			"city": "Rochester",
 			"zip": "14586",
 			"state": "NY",
 			"ccLastFourDigets": "1234"
@@ -108,6 +112,7 @@ var database = [
 			"firstName": "joe",
 			"lastName": "jefferson",
 			"address": "222 road",
+			"city": "Rochester",
 			"zip": "12345",
 			"state": "NY"
 		},
@@ -115,6 +120,7 @@ var database = [
 			"firstName": "joe",
 			"lastName": "jefferson",
 			"address": "222 road",
+			"city": "Rochester",
 			"zip": "12345",
 			"state": "NY",
 			"ccLastFourDigets": "1234"
@@ -138,35 +144,72 @@ var database = [
 	}
 ];
 
-orders.get = function(req,res,next,orderId,billingInfo,shippingInfo,customerInfo,items){
-	console.log('billingInfo: '+ billingInfo + ', shippingInfo: ' + shippingInfo + ', customerInfo: ' + customerInfo + ', items: ' + items);
+var inflateResponseObject = function(data,billingInfo,shippingInfo,customerInfo,items){
+	//Deep clone the object because we will be removing elements
+	var order = JSON.parse(JSON.stringify(data));
+	if(!billingInfo || billingInfo == false){
+		delete order['billingInfo'];
+	}
+	if(!shippingInfo || shippingInfo == false){
+		delete order['shippingInfo'];
+	}
+	if(!customerInfo || customerInfo == false){
+		delete order['customerInfo'];
+	}
+	if(!items || items == false){
+		delete order['items']; 
+	}
+	return order;
+};
 
+orders.get = function(req,res,next,orderId,billingInfo,shippingInfo,customerInfo,items){
 	var orders = [];
 	database.forEach(function(data){
 		if(data['id'] == orderId){
-			//Deep clone the object because we will be removing elements
-			var order = JSON.parse(JSON.stringify(data));
-			if(!billingInfo || billingInfo == false){
-				delete order['billingInfo'];
-			}
-			if(!shippingInfo || shippingInfo == false){
-				delete order['shippingInfo'];
-			}
-			if(!customerInfo || customerInfo == false){
-				delete order['customerInfo'];
-			}
-			if(!items || items == false){
-				delete order['items']; 
-			}
+			var order = inflateResponseObject(data,billingInfo,shippingInfo,customerInfo,items);
 			orders.push(order);					
 		}
-	});	
-
-	res.json(orders);
+	});
+	var responseObj = {
+		"orders": orders
+	};
+	res.json(responseObj);
 };
 
-orders.query = function(req,res,next,address,billingAddress,billingInfo,shippingInfo,customerInfo,shippingInfo,customerInfo,items){
-	
+orders.query = function(req,res,next,address,billingAddress,customerId,billingInfo,shippingInfo,customerInfo,shippingInfo,customerInfo,items){
+	var orders = [];
+	database.forEach(function(data){
+		var found = false;
+		if(billingAddress == true && (address && address.length > 0)){
+			var biObj = data['billingInfo'];
+			var addressString = biObj['firstName']+' '+biObj['lastName']+' '+biObj['address']+' '+biObj['city']+' '+biObj['zip']+' '+biObj['state'];
+			if(addressString.includes(address)){
+				found = true;	
+			}
+		} else if(address && address.length > 0){
+			var siObj = data['shippingInfo'];
+			var addressString = siObj['firstName']+' '+siObj['lastName']+' '+siObj['address']+' '+siObj['city']+' '+siObj['zip']+' '+siObj['state'];
+			if(addressString.includes(address)){
+				found = true;
+			}
+		}
+
+		if(found || (customerId && customerId.length > 0)){
+			if(customerId && customerId.length > 0){
+				if(data['customerId'] == customerId){
+					var order = inflateResponseObject(data,billingInfo,shippingInfo,customerInfo,items);
+					orders.push(order);
+				}
+			}else{
+				var order = inflateResponseObject(data,billingInfo,shippingInfo,customerInfo,items);
+				orders.push(order);
+			}
+		}
+	});
+	var responseObj = {
+		"orders": orders
+	};
+	res.json(responseObj);
 };
 
 module.exports = orders;
