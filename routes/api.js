@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var orders = require('./orders');
 
 /* GET api info */
 router.get('/', function(req, res, next) {
@@ -13,8 +14,10 @@ router.get('/', function(req, res, next) {
 
 /* GET order information */
 router.get('/order',function(req,res,next) {
+	//var orderId = 10;
 	//int : Id of the order
-	var oderId = req.param('orderId');
+	var orderId = req.param('orderId');
+	
 	//bool : if the billing info should be returned
 	var paymentInfo = req.param('paymentInfo');
 	//bool : if the shipping info should be returned
@@ -23,8 +26,8 @@ router.get('/order',function(req,res,next) {
 	var customerInfo = req.param('customerInfo');
 	//bool : if the list of items should be returned
 	var items = req.param('items');
-
-	res.json({orders : [{id:orderId}]});
+	
+	orders(req,res,next,orderId,paymentInfo,shippingInfo,customerInfo,items);	
 });
 
 module.exports = router;
