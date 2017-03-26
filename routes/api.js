@@ -14,10 +14,8 @@ router.get('/', function(req, res, next) {
 
 /* GET order information */
 router.get('/order',function(req,res,next) {
-	//var orderId = 10;
 	//int : Id of the order
 	var orderId = req.param('orderId');
-	
 	//bool : if the billing info should be returned
 	var paymentInfo = req.param('paymentInfo');
 	//bool : if the shipping info should be returned
