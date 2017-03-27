@@ -156,7 +156,7 @@ customer.get = function(req, res, next, first, lastName, email, phone) {
       };
 		};
     if(found && lastName != null){
-      if(!cust['lastName'].includes(first)) {
+      if(!cust['lastName'].includes(lastName)) {
         found = false;
       };
 		};
