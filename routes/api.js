@@ -74,8 +74,13 @@ router.get('/order/search',function(req,res,next){
 	orders.query(req,res,next,address,billingAddress,customerId,billingInfo,shippingInfo,customerInfo,shippingInfo,customerInfo,items);
 });
 
+
 router.get('/customer', function(req, res, next) {
-	customer(req, res, next);
+	var firstName = req.param('firstName');
+	var lastName = req.param('lastName');
+	var email = req.param('email');
+	var phone = req.param('phone');
+	customer.get(req, res, next, firstName, lastName, email, phone);
 });
 
 router.get('/dbtest', function(req, res, next) {
