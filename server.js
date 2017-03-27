@@ -6,14 +6,13 @@ var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
 
-// Route requires
-var index = require('./routes/index');
-var api = require('./routes/api');
-
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Set the base directory for use with requires
+global.__base = __dirname + '/';
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -22,8 +21,7 @@ var port = process.env.PORT || 8080;        // set our port to 8080
 
 // ROUTE SETUP
 // =============================================================================
-app.use('/', index);
-app.use('/api', api);
+app.use(require('./routes'));
 
 
 // ERROR HANDLING
