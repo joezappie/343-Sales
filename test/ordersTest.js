@@ -174,7 +174,7 @@ describe('Orders', function() {
 	describe('GET /order/search', function() {
 		it('should return orders with the given customerId', function(done) {
 			chai.request(server)
-				.get('/api/order')
+				.get('/api/order/search')
 				.query({ customerId: 1 })
 				.end(function(error, response) {
 					response.should.have.status(200);
@@ -194,7 +194,7 @@ describe('Orders', function() {
 			var testAddress = 'john doe 1111 street Rochester NY 14568';
 
 			chai.request(server)
-				.get('/api/order')
+				.get('/api/order/search')
 				.query({ address: testAddress, shippingInfo: true })
 				.end(function(error, response) {
 					response.should.have.status(200);
@@ -221,7 +221,7 @@ describe('Orders', function() {
 		var testAddress = 'john doe 1111 street Rochester NY 14568';
 
 		chai.request(server)
-			.get('/api/order')
+			.get('/api/order/search')
 			.query({ billingAddress: testAddress, billingInfo: true })
 			.end(function(error, response) {
 				response.should.have.status(200);
