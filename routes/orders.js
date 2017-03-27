@@ -1,5 +1,6 @@
-var customer = {};
+var orders = {};
 
+//This will be my mock database for 'searching', will be repleaced with the actual database
 var database = [
 	{
 		"id" : 1,
@@ -138,48 +139,77 @@ var database = [
 				"status": "original",
 				"replaceDeadline": "2017-04-22T20:51:26.908Z",
 				"refundDeadline": "2017-05-22T20:51:26.908Z"
-			}
+			}	
 		]
 	}
 ];
 
-
-
-customer.get = function(req, res, next, first, lastName, email, phone) {
-  var customer = [];
-  database.forEach(function(data){
-    var found = true;
-    var cust = data['customerInfo'];
-		if(first != null){
-      if(!cust['firstName'].includes(first)) {
-        found = false;
-      };
-		};
-    if(found && lastName != null){
-      if(!cust['lastName'].includes(lastName)) {
-        found = false;
-      };
-		};
-    if(found && email != null){
-      if(!cust['email'].includes(email)) {
-        found = false;
-      };
-		};
-    if(found && phone != null){
-      if(!cust['phone'].includes(phone)) {
-        found = false;
-      };
-		};
-
-    if(found) {
-      customer.push(cust);
-    };
-	});
-
-  var responseObj = {
-    "customers": customer
-	};
-  res.json(responseObj);
+var inflateResponseObject = function(data,billingInfo,shippingInfo,customerInfo,items){
+	//Deep clone the object because we will be removing elements
+	var order = JSON.parse(JSON.stringify(data));
+	if(!billingInfo || billingInfo == false){
+		delete order['billingInfo'];
+	}
+	if(!shippingInfo || shippingInfo == false){
+		delete order['shippingInfo'];
+	}
+	if(!customerInfo || customerInfo == false){
+		delete order['customerInfo'];
+	}
+	if(!items || items == false){
+		delete order['items']; 
+	}
+	return order;
 };
 
-module.exports = customer;
+orders.get = function(req,res,next,orderId,billingInfo,shippingInfo,customerInfo,items){
+	var orders = [];
+	database.forEach(function(data){
+		if(data['id'] == orderId){
+			var order = inflateResponseObject(data,billingInfo,shippingInfo,customerInfo,items);
+			orders.push(order);					
+		}
+	});
+	var responseObj = {
+		"orders": orders
+	};
+	res.json(responseObj);
+};
+
+orders.query = function(req,res,next,address,billingAddress,customerId,billingInfo,shippingInfo,customerInfo,shippingInfo,customerInfo,items){
+	var orders = [];
+	database.forEach(function(data){
+		var found = false;
+		if(billingAddress == true && (address && address.length > 0)){
+			var biObj = data['billingInfo'];
+			var addressString = biObj['firstName']+' '+biObj['lastName']+' '+biObj['address']+' '+biObj['city']+' '+biObj['zip']+' '+biObj['state'];
+			if(addressString.includes(address)){
+				found = true;	
+			}
+		} else if(address && address.length > 0){
+			var siObj = data['shippingInfo'];
+			var addressString = siObj['firstName']+' '+siObj['lastName']+' '+siObj['address']+' '+siObj['city']+' '+siObj['zip']+' '+siObj['state'];
+			if(addressString.includes(address)){
+				found = true;
+			}
+		}
+
+		if(found || (customerId && customerId.length > 0)){
+			if(customerId && customerId.length > 0){
+				if(data['customerId'] == customerId){
+					var order = inflateResponseObject(data,billingInfo,shippingInfo,customerInfo,items);
+					orders.push(order);
+				}
+			}else{
+				var order = inflateResponseObject(data,billingInfo,shippingInfo,customerInfo,items);
+				orders.push(order);
+			}
+		}
+	});
+	var responseObj = {
+		"orders": orders
+	};
+	res.json(responseObj);
+};
+
+module.exports = orders;
