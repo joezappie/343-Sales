@@ -29,7 +29,11 @@ router.get('/order',function(req,res,next) {
 	var items = req.param('items');	
 	items = items == 'true';
 
-	orders.get(req,res,next,orderId,billingInfo,shippingInfo,customerInfo,items);	
+        if(orderId){
+                orders.get(req,res,next,orderId,billingInfo,shippingInfo,customerInfo,items);
+        }else{
+                res.status(400).send('400 Bad request: orderId is needed');
+        }
 });
 
 /* GET search for order */
