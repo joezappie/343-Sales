@@ -13,15 +13,6 @@ router.get('/', function(req, res, next) {
 	res.json(message);
 });
 
-
-router.get('/customer', function(req, res, next) {
-	var firstName = req.param('firstName');
-	var lastName = req.param('lastName');
-	var email = req.param('email');
-	var phone = req.param('phone');
-	customer.get(req, res, next, firstName, lastName, email, phone);
-});
-
 /* GET order information */
 router.get('/order',function(req,res,next) {
 	//int : Id of the order
@@ -36,10 +27,14 @@ router.get('/order',function(req,res,next) {
 	var customerInfo = req.param('customerInfo');
 	customerInfo = customerInfo == 'true';
 	//bool : if the list of items should be returned
-	var items = req.param('items');
+	var items = req.param('items');	
 	items = items == 'true';
 
-	orders.get(req,res,next,orderId,billingInfo,shippingInfo,customerInfo,items);
+        if(orderId){
+                orders.get(req,res,next,orderId,billingInfo,shippingInfo,customerInfo,items);
+        }else{
+                res.status(400).send('400 Bad request: orderId is needed');
+        }
 });
 
 /* GET search for order */
@@ -56,16 +51,24 @@ router.get('/order/search',function(req,res,next){
 	billingInfo = billingInfo == 'true';
         //bool : if the shipping info should be returned
         var shippingInfo = req.param('shippingInfo');
-	shippingInfo = shippingInfo == 'true';
+	shippingInfo = shippingInfo == 'true'; 
         //bool : if the customer info should be returned
         var customerInfo = req.param('customerInfo');
 	customerInfo = customerInfo == 'true';
         //bool : if the list of items should be returned
         var items = req.param('items');
 	items = items == 'true';
-
+	
 	orders.query(req,res,next,address,billingAddress,customerId,billingInfo,shippingInfo,customerInfo,shippingInfo,customerInfo,items);
+});
 
+
+router.get('/customer', function(req, res, next) {
+	var firstName = req.param('firstName');
+	var lastName = req.param('lastName');
+	var email = req.param('email');
+	var phone = req.param('phone');
+	customer.get(req, res, next, firstName, lastName, email, phone);
 });
 
 module.exports = router;
