@@ -58,7 +58,7 @@ describe('Orders', function() {
 		it('should return the correct order with billing info', function(done) {
 			chai.request(server)
 				.get('/api/order')
-				.query({ orderId: 1, billingInfo: true })
+				.query({ orderId: 1, billingInfo: 'true' })
 				.end(function(error, response) {
 					response.should.have.status(200);
 
@@ -76,8 +76,7 @@ describe('Orders', function() {
 						address: 'string',
 						city: 'string',
 						zip: 'string',
-						state: 'string',
-						ccLastFourDigits: 'string'
+						state: 'string'
 					});
 
 					done();
@@ -87,7 +86,7 @@ describe('Orders', function() {
 		it('should return the correct order with customer info', function(done) {
 			chai.request(server)
 				.get('/api/order')
-				.query({ orderId: 1, customerInfo: true })
+				.query({ orderId: 1, customerInfo: 'true' })
 				.end(function(error, response) {
 					response.should.have.status(200);
 
@@ -114,7 +113,7 @@ describe('Orders', function() {
 		it('should return the correct order with shipping info', function(done) {
 			chai.request(server)
 				.get('/api/order')
-				.query({ orderId: 1, shippingInfo: true })
+				.query({ orderId: 1, shippingInfo: 'true' })
 				.end(function(error, response) {
 					response.should.have.status(200);
 
@@ -142,7 +141,7 @@ describe('Orders', function() {
 		it('should return the correct order with items', function(done) {
 			chai.request(server)
 				.get('/api/order')
-				.query({ orderId: 1, items: true })
+				.query({ orderId: 1, items: 'true' })
 				.end(function(error, response) {
 					response.should.have.status(200);
 
@@ -195,7 +194,7 @@ describe('Orders', function() {
 
 			chai.request(server)
 				.get('/api/order/search')
-				.query({ address: testAddress, shippingInfo: true })
+				.query({ address: testAddress, shippingInfo: 'true' })
 				.end(function(error, response) {
 					response.should.have.status(200);
 
@@ -222,7 +221,7 @@ describe('Orders', function() {
 
 		chai.request(server)
 			.get('/api/order/search')
-			.query({ billingAddress: testAddress, billingInfo: true })
+			.query({ billingAddress: testAddress, billingInfo: 'true' })
 			.end(function(error, response) {
 				response.should.have.status(200);
 
