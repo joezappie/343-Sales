@@ -1,4 +1,5 @@
-var customer = {};
+var express = require('express');
+var router = express.Router();
 
 var database = [
 	{
@@ -145,41 +146,45 @@ var database = [
 
 
 
-customer.get = function(req, res, next, first, lastName, email, phone) {
-  var customer = [];
-  database.forEach(function(data){
-    var found = true;
-    var cust = data['customerInfo'];
-		if(first != null){
-      if(!cust['firstName'].includes(first)) {
-        found = false;
-      };
+router.get('/', function(req, res, next) {
+	var customer = [];
+	var firstName = req.param('firstName');
+	var lastName = req.param('lastName');
+	var email = req.param('email');
+	var phone = req.param('phone');
+	database.forEach(function(data){
+		var found = true;
+		var cust = data['customerInfo'];
+		if(firstName != null){
+			if(!cust['firstName'].includes(firstName)) {
+				found = false;
+			};
 		};
-    if(found && lastName != null){
-      if(!cust['lastName'].includes(lastName)) {
-        found = false;
-      };
+		if(found && lastName != null){
+			if(!cust['lastName'].includes(lastName)) {
+				found = false;
+			};
 		};
-    if(found && email != null){
-      if(!cust['email'].includes(email)) {
-        found = false;
-      };
+		if(found && email != null){
+			if(!cust['email'].includes(email)) {
+				found = false;
+			};
 		};
-    if(found && phone != null){
-      if(!cust['phone'].includes(phone)) {
-        found = false;
-      };
+		if(found && phone != null){
+			if(!cust['phone'].includes(phone)) {
+				found = false;
+			};
 		};
 
-    if(found) {
-      customer.push(cust);
-    };
+		if(found) {
+			customer.push(cust);
+		};
 	});
 
-  var responseObj = {
-    "customers": customer
+	var responseObj = {
+		"customers": customer
 	};
-  res.json(responseObj);
-};
+	res.json(responseObj);
+});
 
-module.exports = customer;
+module.exports = router;
