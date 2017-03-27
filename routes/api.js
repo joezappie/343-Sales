@@ -1,4 +1,5 @@
 var express = require('express');
+var customer = require('./customer');
 var router = express.Router();
 var orders = require('./orders');
 
@@ -59,6 +60,10 @@ router.get('/order/search',function(req,res,next){
 	items = items == 'true';
 	
 	orders.query(req,res,next,address,billingAddress,customerId,billingInfo,shippingInfo,customerInfo,shippingInfo,customerInfo,items);
+});
+
+router.get('/customer', function(req, res, next) {
+	customer(req, res, next);
 });
 
 module.exports = router;
