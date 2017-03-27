@@ -5,8 +5,8 @@ var router = express.Router();
 var db = new Database();
 
 // Route requires
-router.use('/customer', require('./customers'));
-router.use('/order', require('./orders'));
+router.use('/customer', require('./customer'));
+router.use('/order', require('./order'));
 
 function updateResponse(err, rows, fields, res) {
 	res.write("QUERY DONE!");
