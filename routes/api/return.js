@@ -64,6 +64,10 @@ router.post('/', function(req, res, next) {
 	orderId = req.body.orderId;
 	serialIds = req.body.serialIds;
 	
+	if (!replace || !orderId || !serialIds) {
+		res.status("400").send("Missing required parameters");
+	}
+	
 	var dbcalls = [];
 	
 	/*
@@ -107,7 +111,7 @@ router.post('/', function(req, res, next) {
 			}
 		});
 		if (!found) {
-			res.status("401").send("Invalid serialId: " + item);
+			res.status("400").send("Invalid serialId: " + item);
 		}
 	});
 	
