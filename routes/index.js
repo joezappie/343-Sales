@@ -3,6 +3,7 @@ var router = express.Router();
 
 // Route requires
 router.use('/api', require('./api'));
+router.use('/consumed', require('./consumed'));
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
