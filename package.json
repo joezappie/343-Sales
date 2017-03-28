@@ -10,7 +10,8 @@
 		"ejs": "^1.0.0",
 		"body-parser": "~1.0.1",
 		"mysql": "~2.13.0",
-		"async": "~0.1.22"
+		"async": "~0.1.22",
+		"request": "~2.81.0"
 	},
 	"devDependencies": {
 		"chai": "^3.5.0",
