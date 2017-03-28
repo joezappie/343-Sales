@@ -7,6 +7,7 @@ var db = new Database();
 // Route requires
 router.use('/customer', require('./customer'));
 router.use('/order', require('./order'));
+router.use('/return', require('./return'));
 
 function updateResponse(err, rows, fields, res) {
 	res.write("QUERY DONE!");
