@@ -1,8 +1,7 @@
 {
-	"mysqlConfig" : {
-		"host" : "localhost",
-		"user" : "YOUR-USERNAME",
-		"password" : "YOUR-PASSWORD",
-		"database" : "sales"
-	}
+	"dialect": "mysql",
+	"host" : "vm343c.se.rit.edu",
+	"user" : "root",
+	"password" : "Team$ales",
+	"database" : "sales"
 }
