@@ -15,7 +15,7 @@ router.get('/apiTest', function(req, res) {
 });
 
 router.get('/salesRep', function(req, res) {
-	res.render('pages/salesTest');
+	res.render('pages/salesRep');
 });
 
 module.exports = router;
