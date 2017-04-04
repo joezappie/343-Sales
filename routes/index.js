@@ -10,4 +10,12 @@ router.get('/', function(req, res, next) {
 	res.render('pages/index');
 });
 
+router.get('/apiTest', function(req, res) {
+	res.render('pages/apiTest');
+});
+
+router.get('/salesRep', function(req, res) {
+	res.render('pages/salesTest');
+});
+
 module.exports = router;

@@ -1,0 +1,11 @@
+.storeLogo {
+	margin-left: 20px;
+}
+
+.phoneContainer {
+	padding: 20px 0;
+}
+
+.phoneContainer .card-title {
+	font-weight: 500;
+}
