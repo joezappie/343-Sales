@@ -8,9 +8,10 @@ module.exports = db.define('orderItem', {
         primaryKey: true,
         autoIncrement: true
     },
-    serialNumber: { type: Sequelize.STRING(32), allowNull: false},
-	modelId: { type: Sequelize.INTEGER, allowNull: false},
+    serialNumber: { type: Sequelize.INTEGER, allowNull: false},
+	modelId: { type: Sequelize.STRING(32), allowNull: false},
 	price: { type: Sequelize.DECIMAL(10,2), allowNull: false},
 	replacementDeadline: { type: Sequelize.DATE, allowNull: false},
 	refundDeadline: { type: Sequelize.DATE, allowNull: false},
+	refunded: { type: Sequelize.INTEGER },
 }, {timestamps: false, freezeTableName: true, tableName: 'OrderItem'});

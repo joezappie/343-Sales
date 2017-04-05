@@ -10,5 +10,5 @@ module.exports = db.define('paymentMethod', {
     },
     cardNumber: { type: Sequelize.STRING(25), allowNull: false},
 	CVC: { type: Sequelize.INTEGER, allowNull: false},
-	experationDate: { type: Sequelize.DATE, allowNull: false},
+	expirationDate: { type: Sequelize.DATE, allowNull: false},
 }, {timestamps: false, freezeTableName: true, tableName: 'PaymentMethod'});
