@@ -28,6 +28,6 @@ models.Orders.belongsTo(models.PaymentMethod, { foreignKey: { name: 'paymentMeth
 models.OrderItem.belongsTo(models.Orders, { foreignKey: { name: 'orderId', allowNull: false }});
 
 // Payment Method Relations
-models.PaymentMethod.belongsTo(models.Address, { foreignKey: { name: 'billingAddressId', allowNull: false }})
+models.PaymentMethod.belongsTo(models.Address, { foreignKey: { name: 'billingAddressId', allowNull: false }});
 
 module.exports = models;
