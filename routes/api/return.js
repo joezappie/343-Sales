@@ -1,6 +1,4 @@
 var express = require('express');
-var Database = require(__base + '/database.js');
-var async = require('async');
 
 var router = express.Router();
 
