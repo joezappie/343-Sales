@@ -1,5 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<script type="text/javascript">
+function findTotal(){
+	var arr = document.getElementsByName('phone_tot');
+	var tot=0;
+	for(var i=0;i<arr.length;i++){
+		if(parseInt(arr[i].value))
+			tot += parseInt(arr[i].value);
+		};
+		document.getElementById('total').value = tot;
+};
+
+</script>
+
 <head>
 	<!--Import Google Icon Font-->
 	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -46,14 +60,68 @@
 					</div>
 				</div>
 				<div class="row">
-					<ul class="collection with-header">
+					<ul class="collection with-header phoneList">
 						<li class="collection-header"><h4>Phone Models</h4></li>
-						<li class="collection-item">Phone 1<a href="#!" class="secondary-content"><i </i></a></li>
-						<li class="collection-item">Phone 2<a href="#!" class="secondary-content"><i class="material-icons">send</i></a></li>
-						<li class="collection-item">Phone 3<a href="#!" class="secondary-content"><i class="material-icons">send</i></a></li>
-						<li class="collection-item">Phone 4<a href="#!" class="secondary-content"><i class="material-icons">send</i></a></li>
+						<li class="collection-item">
+							Phone 1
+							<a href="#!" class="secondary-content">
+					      	<input onblur="findTotal()" value=0 name="phone_tot" type="text" class="validate phoneCount"/><br>
+							</a>
+							<div style='clear:both;'></div>
+						</li>
+						<li class="collection-item">
+							Phone 2
+							<a href="#!" class="secondary-content">
+					      	<input onblur="findTotal()" value=0 name="phone_tot" type="text" class="validate phoneCount"/><br>
+							</a>
+							<div style='clear:both;'></div>
+						</li>
+						<li class="collection-item">
+							Phone 3
+							<a href="#!" class="secondary-content">
+					      <input onblur="findTotal()" value=0 name="phone_tot" type="text" class="validate phoneCount"/><br>
+							</a>
+							<div style='clear:both;'></div>
+						</li>
+						<li class="collection-item">
+							Phone 4
+							<a href="#!" class="secondary-content">
+					      	<input onblur="findTotal()" value=0 name="phone_tot" type="text" class="validate phoneCount"/>
+							</a>
+							<div style='clear:both;'></div>
+						</li>
+						<li class="collection-item">
+							<a href="#!" class="secondary-content">
+								Total: <input type="text" name="total" id="total" readonly class="phoneCount"/><br>
+							</a>
+						</li>
 					</ul>
 				</div>
+
+				<label style="font-size:1.5rem;color:#000000;">Shipping Address</label>
+				<div class="row">
+					<div class="input-field col">
+						<i class="material-icons prefix">location_on</i>
+          	<input id="shipping_address" type="text" class="validate" style="width:85%;">
+          	<label for="shipping_address">Address</label>
+					</div>
+					<div class="input-field col">
+          	<input id="city" type="text" class="validate" style="width:70%;">
+          	<label for="city">City</label>
+					</div>
+					<div class="input-field col">
+          	<input id="state" type="text" class="validate" style="width:20%;">
+          	<label for="state">State</label>
+					</div>
+					<div class="input-field col">
+          	<input id="zip" type="text" class="validate" style="width:30%;">
+          	<label for="zip">Zip Code</label>
+					</div>
+				</div>
+
+				<button class="btn waves-effect waves-light" type="submit" name="action">Submit
+    			<i class="material-icons right">send</i>
+  			</button>
     	</form>
   	</div>
 	</div>
