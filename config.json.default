@@ -1,7 +1,7 @@
 {
 	"dialect": "mysql",
-	"host" : "vm343c.se.rit.edu",
-	"user" : "root",
-	"password" : "Team$ales",
-	"database" : "sales"
+	"host" : "HOSTNAME",
+	"user" : "YOURUSER",
+	"password" : "YOURPASSWORD",
+	"database" : "YOURDATABASE"
 }
