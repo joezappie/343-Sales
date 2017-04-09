@@ -1,85 +1,107 @@
+var models = require(__base + 'models.js');
 var express = require('express');
+var Sequelize = require('sequelize');
+
 var router = express.Router();
 
 var orders = {};
 
 router.get('/', function(req,res,next){
-	var orders = [];
 	
-	//int : Id of the order
-	var orderId = req.param('orderId');
-	//bool : if the billing info should be returned
-	var billingInfo = req.param('billingInfo');
-	billingInfo = billingInfo == 'true';
-	//bool : if the shipping info should be returned
-	var shippingInfo = req.param('shippingInfo');
-	shippingInfo = shippingInfo == 'true';
-	//bool : if the customer info should be returned
-	var customerInfo = req.param('customerInfo');
-	customerInfo = customerInfo == 'true';
-	//bool : if the list of items should be returned
-	var items = req.param('items');	
-	items = items == 'true';
+	res.type('json');
+
+	var where = {};
 	
-	if (!orderId) {
+	if(req.param('orderId') != null) {
+		where.id = parseInt(req.param('orderId'));
+	} else {
 		res.status(400).send('400 Bad request: orderId is needed');
+		return;
 	}
+	
+	models.Orders.findOne({
+		where: where,
+		 include: [{ all: true, nested: true }]
+	}).then(function(order) { 
+		res.json(order);
+	}).catch(function(err) {
+		res.json({error: err});
+	});  
+	
 });
 
 router.get('/search', function(req,res,next){
-	var orders = [];
-	//String : Shipping address
-	var address = req.param('address');
-	//bool : False by default, True will search by billing
-	var billingAddress = req.param('billingAddress');
-	billingAddress = billingAddress == 'true';
-	//int : Customer Id to help refine search. Optional
-	var customerId = req.param('customerId');
-	//bool : if the billing info should be returned
-    var billingInfo = req.param('billingInfo');
-	billingInfo = billingInfo == 'true';
-    //bool : if the shipping info should be returned
-    var shippingInfo = req.param('shippingInfo');
-	shippingInfo = shippingInfo == 'true'; 
-    //bool : if the customer info should be returned
-    var customerInfo = req.param('customerInfo');
-	customerInfo = customerInfo == 'true';
-    //bool : if the list of items should be returned
-    var items = req.param('items');
-	items = items == 'true';
+	res.type('json');
 	
-	database.forEach(function(data){
-		var found = false;
-		if(billingAddress == true && (address && address.length > 0)){
-			var biObj = data['billingInfo'];
-			var addressString = biObj['firstName']+' '+biObj['lastName']+' '+biObj['address']+' '+biObj['city']+' '+biObj['zip']+' '+biObj['state'];
-			if(addressString.includes(address)){
-				found = true;	
-			}
-		} else if(address && address.length > 0){
-			var siObj = data['shippingInfo'];
-			var addressString = siObj['firstName']+' '+siObj['lastName']+' '+siObj['address']+' '+siObj['city']+' '+siObj['zip']+' '+siObj['state'];
-			if(addressString.includes(address)){
-				found = true;
-			}
-		}
-
-		if(found || (customerId && customerId.length > 0)){
-			if(customerId && customerId.length > 0){
-				if(data['customerId'] == customerId){
-					var order = inflateResponseObject(data,billingInfo,shippingInfo,customerInfo,items);
-					orders.push(order);
-				}
-			}else{
-				var order = inflateResponseObject(data,billingInfo,shippingInfo,customerInfo,items);
-				orders.push(order);
-			}
-		}
+	var where = {};
+	var include = [{ all: true, nested: true }];
+	var addressQuery = {};
+	var customerQuery = {};
+		
+	if(req.param('customerId') != null) {
+		where.customerId = parseInt(req.param('customerId'));
+	}
+	
+	if(req.param('city')) {
+		addressQuery.city = {like: "%" + req.param('city') + "%"};
+	}
+	
+	if(req.param('zipCode')) {
+		addressQuery.zip = req.param('zipCode');
+	}
+	
+	if(req.param('address')) {
+		var addressParts = [];
+		req.param('address').split(" ").forEach(function(value, index) {
+			addressParts.push({like: "%" + value + "%"});
+		});
+		addressQuery.address = {$or: addressParts};
+	}
+	
+	if(req.param('firstName')) {
+		customerQuery.firstName = {like: "%" + req.param('firstName') + "%"};
+	}
+	
+	if(req.param('lastName')) {
+		customerQuery.lastName = {like: "%" + req.param('lastName') + "%"};
+	}
+	
+	if(req.param('billingAddress')) {
+		include.push({ 
+			model: models.PaymentMethod,
+			as: 'paymentMethod',
+			include: [{
+				model: models.Address,
+				as: 'billingAddress',
+				where: addressQuery,
+				include: [{
+					model: models.Customer,
+					as: 'customer',
+					where: customerQuery
+				}],
+			}]
+		});
+	} else {
+		include.push({ 
+			model: models.Address,
+			as: 'shippingAddress',
+			where: addressQuery,
+			include: [{
+				model: models.Customer,
+				as: 'customer',
+				where: customerQuery
+			}],
+		});
+	}
+	
+	models.Orders.findAll({
+		where: where,
+		include: include
+	}).then(function(orders) { 
+		res.json(orders);
+	}).catch(function(err) {
+		res.json({error: err});
 	});
-	var responseObj = {
-		"orders": orders
-	};
-	res.json(responseObj);
 });
 
 module.exports = router;

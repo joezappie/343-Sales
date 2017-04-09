@@ -18,16 +18,16 @@ models.TaxRates = require("./models/taxrates.js");
  * SETUP RELATIONS
  **************************************/
 // Address Relations
-models.Address.belongsTo(models.Customer, { foreignKey: { name: 'customerId', allowNull: false }});
-models.Address.belongsTo(models.TaxRates, { foreignKey: { name: 'stateId', allowNull: false }});
+models.Address.belongsTo(models.Customer, { as: 'customer', onDelete: 'CASCADE', foreignKey: { name: 'customerId', allowNull: false }});
+models.Address.belongsTo(models.TaxRates, { as: 'state', onDelete: 'CASCADE', foreignKey: { name: 'stateId', allowNull: false }});
 
 // Orders Relations
-models.Orders.belongsTo(models.Customer, { foreignKey: { name: 'customerId', allowNull: false }});
-models.Orders.belongsTo(models.Address, { foreignKey: { name: 'shippingAddressId', allowNull: false }});
-models.Orders.belongsTo(models.PaymentMethod, { foreignKey: { name: 'paymentMethodId', allowNull: false }});
-models.OrderItem.belongsTo(models.Orders, { foreignKey: { name: 'orderId', allowNull: false }});
+models.Orders.belongsTo(models.Customer, { as: 'customer', onDelete: 'CASCADE', foreignKey: { name: 'customerId', allowNull: false }});
+models.Orders.belongsTo(models.Address, { as: 'shippingAddress', onDelete: 'CASCADE', foreignKey: { name: 'shippingAddressId', allowNull: false }});
+models.Orders.belongsTo(models.PaymentMethod, { as: 'paymentMethod', onDelete: 'CASCADE', foreignKey: { name: 'paymentMethodId', allowNull: false }});
+models.OrderItem.belongsTo(models.Orders, { as: 'order', onDelete: 'CASCADE', foreignKey: { name: 'orderId', allowNull: false }});
 
 // Payment Method Relations
-models.PaymentMethod.belongsTo(models.Address, { foreignKey: { name: 'billingAddressId', allowNull: false }})
+models.PaymentMethod.belongsTo(models.Address, { as: 'billingAddress', onDelete: 'CASCADE', foreignKey: { name: 'billingAddressId', allowNull: false }})
 
 module.exports = models;
