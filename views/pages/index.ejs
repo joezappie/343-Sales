@@ -1,55 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<!--Import Google Icon Font-->
-	<link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-	<!-- Compiled and minified CSS -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/css/materialize.min.css">
-	<link rel="stylesheet" href="/assets/css/main.css">
-
-	<script
-		src="https://code.jquery.com/jquery-3.2.1.min.js"
-		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-		crossorigin="anonymous">
-	</script>
-
-	<!-- Compiled and minified JavaScript -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.1/js/materialize.min.js"></script>
-
-	<!--Let browser know website is optimized for mobile-->
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Sales Homepage - Store</title>
+	<%- include header.ejs %>
 </head>
 <body>
-	<nav>
-		<div class="nav-wrapper teal darken-1">
-			<a href="#" class="brand-logo storeLogo">Store</a>
-			<ul id="nav-mobile" class="right hide-on-med-and-down">
-				<li><a href="#">Shopping Cart</a></li>
-				<li><a href="/salesRep">Sales Rep</a></li>
-			</ul>
-		</div>
-	</nav>
+	<%- include consumer-navbar.ejs %>
+	
 	<div class="container phoneContainer">
 		<div class="row">
-			<div class="col s6">
-				<div class="card sticky-action">
-					<div class="card-image waves-effect waves-block waves-light">
-						<img class="activator" src="/assets/phoneImg.jpg">
-					</div>
-					<div class="card-content">
-						<span class="card-title activator grey-text text-darken-4">Medium Tier Phone<i class="material-icons right">more_vert</i></span>
-						<p>Here is a simple description of the phone.</p>
-					</div>
-					<div class="card-reveal">
-						<span class="card-title grey-text text-darken-4">Medium Tier Phone<i class="material-icons right">close</i></span>
-						<p>Here is some more information about this product that is only revealed once clicked on.</p>
-					</div>
-					<div class="card-action">
-            <a href="#">Add to Cart</a>
+
+			<% phoneModels.forEach(function(phoneModel) { %>
+				<div class="col s6">
+					<div class="card sticky-action">
+						<div class="card-image waves-effect waves-block waves-light">
+							<img class="activator" src="/assets/phoneImg.jpg">
+						</div>
+						<div class="card-content">
+							<span class="card-title activator grey-text text-darken-4">
+								<%= phoneModel.fields.description %>
+								<i class="material-icons right">more_vert</i>
+							</span>
+							<div class="phonePrice blue-grey-text text-darken-2">
+								<%= '$' + phoneModel.fields.price %>
+							</div>
+						</div>
+						<div class="card-reveal">
+							<span class="card-title grey-text text-darken-4">
+								<%= phoneModel.fields.description %>
+								<i class="material-icons right">close</i>
+							</span>
+							<div class="phonePrice blue-grey-text text-darken-1">
+								<%= '$' + phoneModel.fields.price %>
+							</div>
+							<p>Here is some more information about this product that is only revealed once clicked on.</p>
+						</div>
+						<div class="card-action phoneCardFooter">
+	            <a class="addCartButton" href="#">Add to Cart</a>
+							<div class="input-field quantitySelect">
+							  <div class="qtyLabel">Qty:</div>
+								<select>
+									<option value="1" selected>1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+									<option value="6">6</option>
+								</select>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
+			<% }); %>
+
 		</div>
 	</div>
 </body>
