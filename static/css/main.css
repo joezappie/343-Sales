@@ -9,3 +9,10 @@
 .phoneContainer .card-title {
 	font-weight: 500;
 }
+
+.phoneList .phoneCount {
+	padding: 0px 0;
+	margin: 0;
+	height: 1rem;
+	width: 55px;
+}
