@@ -22,16 +22,3 @@ module.exports = db.define('address', {
     }
   }
 });
-
-var Address = require("./address.js");
-
-var test = Address.build({
-  "firstName": "john",
-  "lastName": "doe",
-  "address": "1111 street",
-  "city": "Rochester",
-  "zip": "14586",
-  "state": "NY"
-});
-
-console.log(test.getPrettyAddress());
