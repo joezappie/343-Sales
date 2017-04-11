@@ -15,7 +15,7 @@ router.get('/', function(req,res,next){
 	if(req.param('orderId') != null) {
 		where.id = parseInt(req.param('orderId'));
 	} else {
-		res.status(400).send('400 Bad request: orderId is needed');
+		res.status(400).send('400 Bad request: invalid parameters');
 		return;
 	}
 	
@@ -37,6 +37,7 @@ router.get('/search', function(req,res,next){
 	var include = [{ all: true, nested: true }];
 	var addressQuery = {};
 	var customerQuery = {};
+	var stateQuery = {};
 		
 	if(req.param('customerId') != null) {
 		where.customerId = parseInt(req.param('customerId'));
@@ -48,6 +49,12 @@ router.get('/search', function(req,res,next){
 	
 	if(req.param('zipCode')) {
 		addressQuery.zip = req.param('zipCode');
+	}
+	
+	if(req.param('state')) {
+		stateQuery = {
+			state: {like: "%" + req.param('state') + "%"}
+		}
 	}
 	
 	if(req.param('address')) {
@@ -70,28 +77,10 @@ router.get('/search', function(req,res,next){
 		include.push({ 
 			model: models.PaymentMethod,
 			as: 'paymentMethod',
-			include: [{
-				model: models.Address,
-				as: 'billingAddress',
-				where: addressQuery,
-				include: [{
-					model: models.Customer,
-					as: 'customer',
-					where: customerQuery
-				}],
-			}]
+			include: [generateAddressInclude('billingAddress')],
 		});
 	} else {
-		include.push({ 
-			model: models.Address,
-			as: 'shippingAddress',
-			where: addressQuery,
-			include: [{
-				model: models.Customer,
-				as: 'customer',
-				where: customerQuery
-			}],
-		});
+		include.push(generateAddressInclude('shippingAddress'));
 	}
 	
 	models.Orders.findAll({
@@ -102,6 +91,26 @@ router.get('/search', function(req,res,next){
 	}).catch(function(err) {
 		res.json({error: err});
 	});
+	
+	function generateAddressInclude(association) {
+		var include = { 
+			model: models.Address,
+			as: association,
+			where: addressQuery,
+			include: [{
+				model: models.Customer,
+				as: 'customer',
+				where: customerQuery
+			}, {
+				model: models.TaxRates,
+				as: 'state',
+				where: stateQuery,
+			}],
+		}
+		
+		return include;
+	}
 });
+
 
 module.exports = router;

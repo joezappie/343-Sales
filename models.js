@@ -8,7 +8,7 @@ var models = {};
 models.Address = require("./models/address.js");
 models.Customer = require("./models/customer.js");
 models.Orders = require("./models/orders.js");
-models.OrderItem = require("./models/orderitem.js");
+models.Item = require("./models/orderitem.js");
 models.PaymentMethod = require("./models/paymentmethod.js");
 models.ReturnPolicy = require("./models/returnpolicy.js");
 models.ShippingCosts = require("./models/shippingcosts.js");
@@ -25,7 +25,8 @@ models.Address.belongsTo(models.TaxRates, { as: 'state', onDelete: 'CASCADE', fo
 models.Orders.belongsTo(models.Customer, { as: 'customer', onDelete: 'CASCADE', foreignKey: { name: 'customerId', allowNull: false }});
 models.Orders.belongsTo(models.Address, { as: 'shippingAddress', onDelete: 'CASCADE', foreignKey: { name: 'shippingAddressId', allowNull: false }});
 models.Orders.belongsTo(models.PaymentMethod, { as: 'paymentMethod', onDelete: 'CASCADE', foreignKey: { name: 'paymentMethodId', allowNull: false }});
-models.OrderItem.belongsTo(models.Orders, { as: 'order', onDelete: 'CASCADE', foreignKey: { name: 'orderId', allowNull: false }});
+models.Item.belongsTo(models.Orders, { as: 'order', onDelete: 'CASCADE', foreignKey: { name: 'orderId', allowNull: false }});
+models.Orders.hasMany(models.Item, { foreignKey: 'orderId' });
 
 // Payment Method Relations
 models.PaymentMethod.belongsTo(models.Address, { as: 'billingAddress', onDelete: 'CASCADE', foreignKey: { name: 'billingAddressId', allowNull: false }})

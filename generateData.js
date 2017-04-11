@@ -160,7 +160,7 @@ Promise.all(promises).then(function() {
 										orderId: customer.orders[Math.floor(Math.random()*customer.orders.length)].id
 									}
 									
-									models.OrderItem.create(data).then(function(result) {
+									models.Item.create(data).then(function(result) {
 										resolve(result.dataValues);
 									});
 								})
