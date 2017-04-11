@@ -18,7 +18,8 @@ module.exports = db.define('customer', {
   //Start class settings
   {timestamps: false, freezeTableName: true, tableName: 'Customer',
 
-  //Instance methods are technically part of the class settings.
+  //Instance methods are technically part of the class settings,
+  //so don't lost track of your brackets or commas.
   //A method name maps to a define function.
   instanceMethods : {
     getFullname : function () {
