@@ -30,13 +30,3 @@ module.exports = db.define('paymentMethod', {
     }
   }
 });
-
-var PaymentMethod = require("./paymentmethod.js");
-
-var test = PaymentMethod.build({
-  cardNumber : "1122 1222 1222 1222",
-  CVC : 300,
-  expirationDate : "2016-09-01T00:00:00.000Z"
-});
-
-console.log(test.isExpired());
