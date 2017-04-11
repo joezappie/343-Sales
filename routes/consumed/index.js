@@ -11,6 +11,10 @@ router.get('/', function(req, res, next) {
 	res.render('pages/index');
 });
 
+router.get('/salesRep', function(req, res, next) {
+	res.render('pages/salesRep');
+});
+
 /* Load the URL and then display its contents or show an error */
 function loadJSON(url, res) {
 	request(url, function (error, response, body) {
@@ -28,7 +32,7 @@ function postJSON(url, json, res) {
 	  method: 'POST',
 	  json: json
 	};
-	
+
 	request(options, function (error, response, body) {
 		if (!error && response.statusCode === 200) {
 			res.send(body);
@@ -72,9 +76,9 @@ router.get('/accounting/sale', function(req, res, next) {
 		transactionType: "Deposit",
 		salesID: 1
 	};
-	
+
 	res.write("POST DATA: " + JSON.stringify(json));
-	
+
 	postJSON(ACCOUNTING_BASE_URL + "/ui/sale", json, res);
 });
 
