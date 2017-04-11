@@ -26,29 +26,4 @@ module.exports = db.define('customer', {
       return [this.firstName, this.lastName].join(' ');
     }
   },
-
-  //Here's an example of a class method. This cannot be called
-  //on instances of the customer method.
-  classMethods : {
-    test : function (){
-      return "test";
-    }
-  }
 });
-
-var CustomerClass = require("./customer.js");
-
-var customerInstance = CustomerClass.build(
-  {
-    id : 6,
-    firstName : "Jeff",
-    lastName : "Bridges",
-    email : "test@gmail.com",
-    password : "password",
-    phoneNumber : "555 234 4534",
-    isCompany : false
-  }
-);
-
-console.log(JSON.stringify(customerInstance.getFullname()));
-console.log(JSON.stringify(CustomerClass.test()));
