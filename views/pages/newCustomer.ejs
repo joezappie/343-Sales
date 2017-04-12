@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<script type="text/javascript">
+function findTotal(){
+	var arr = document.getElementsByName('phone_tot');
+	var tot=0;
+	for(var i=0;i<arr.length;i++){
+		if(parseInt(arr[i].value))
+			tot += parseInt(arr[i].value);
+		};Doc
+		document.getElementById('total').value = tot;
+};
+
+</script>
+
+<head>
+	<title>New Customer</title>
+	<%- include header.ejs %>
+</head>
+<body>
+	<nav>
+		<div class="nav-wrapper teal darken-1">
+			<a href="/salesRep" class="brand-logo storeLogo">"\<"New Customer</a>
+			<ul id="nav-mobile" class="right hide-on-med-and-down">
+				<li><a href="/">Sign Out</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div class="w3-container">
+
+	</div>
+</body>
+</html>
