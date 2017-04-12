@@ -1,48 +1,31 @@
+var models = require(__base + 'models.js');
 var express = require('express');
 var router = express.Router();
 
-var database = require(__base + 'database.js');
-var db = new database();
-
-
 router.get('/', function(req, res, next) {
-	var cust = [];
-	db.query('select id, firstName, lastName, email, phoneNumber from Customer',
-		function(error, results, fields, response) {
-			results.forEach(function(data) {
-				var found = true;
-				if(req.param('firstName') != null) {
-					if(!data['firstName'].includes(req.param('firstName'))) {
-						found = false;
-					};
-				};
-
-				if(req.param('lastName') != null && found) {
-					if(!data['lastName'].includes(req.param('lastName'))) {
-						found = false;
-					};
-				};
-
-				if(req.param('email') != null && found) {
-					if(!data['email'].includes(req.param('email'))) {
-						found = false;
-					};
-				};
-
-				if(req.param('phone') != null && found) {
-					if(!data['phoneNumber'].includes(req.param('phone'))) {
-						found = false
-					};
-				};
-
-				if(found == true) {
-					cust.push(data);
-				};
-		});
-		var responseObj = {
-			"customers": cust
-		};
-		res.json(responseObj);
+	
+	var where = {};
+	
+	if(req.param('firstName') != null) {
+		where.firstName = { like: "%" + req.param('firstName') + "%" };
+	}
+	
+	if(req.param('lastName') != null) {
+		where.lastName = { like: "%" + req.param('lastName') + "%" };
+	}
+	
+	if(req.param('email') != null) {
+		where.email = req.param('email');
+	}
+	
+	if(req.param('phoneNumber') != null) {
+		where.phoneNumber = req.param('phoneNumber');
+	}
+	
+	models.Customer.findAll({
+		where: where
+	}).then(function(results) {
+		res.json(results);
 	});
 });
 
