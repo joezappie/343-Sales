@@ -56,4 +56,8 @@ router.get('/shoppingCart', function(req, res) {
 	res.render('pages/shoppingCart');
 });
 
+router.get('/newCustomer', function(req, res) {
+	res.render('pages/newCustomer');
+});
+
 module.exports = router;
