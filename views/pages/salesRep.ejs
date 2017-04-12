@@ -23,7 +23,7 @@ function findTotal(){
 		<div class="nav-wrapper teal darken-1">
 			<a href="#" class="brand-logo storeLogo">Sales Rep</a>
 			<ul id="nav-mobile" class="right hide-on-med-and-down">
-				<li><a href="/salesRep">Sign Out</a></li>
+				<li><a href="/">Sign Out</a></li>
 			</ul>
 		</div>
 	</nav>
@@ -35,10 +35,8 @@ function findTotal(){
     				<select class="browser-default">
       				<option value="" disabled selected>Select Company</option>
 							<% customers.forEach(function(customer) { %>
-							<option><%= customer.fields.firstName %></option>
+							<option><%= customer.lastName %>, <%=customer.firstName %></option>
 							<% }); %>
-      				<option value="1">Option 1</option>
-      				<option value="2">Option 2</option>
     				</select>
 					</div>
 					<div class="input-field col s6">

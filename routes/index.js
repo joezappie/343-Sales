@@ -27,7 +27,6 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/salesRep', function(req, res) {
-
 	var phoneModels = [];
 	request(INVENTORY_BASE_URL + 'models/all', function (error, response, body) {
 		if (!error && response.statusCode === 200) {
@@ -35,22 +34,16 @@ router.get('/salesRep', function(req, res) {
 				return model[0];
 			});
 			//console.log(phoneModels);
-			res.render('pages/salesRep', { phoneModels: phoneModels });
-		} else {
-			res.render('pages/salesRep');
-		}
-	});
-
-	var customers = [];
-	request(SALES_BASE_URL + 'api/customer/', function (error, response, body) {
-		if (!error && response.statusCode === 200) {
-			customers = JSON.parse(body).map(function(cust) {
-				return cust[0];
+			var customers = [];
+			request(SALES_BASE_URL + 'api/customer/', function (error, response, body) {
+				if (!error && response.statusCode === 200) {
+					customers = JSON.parse(body).map(function(cust) {
+						return cust;
+					});
+					//console.log(customers);
+					res.render('pages/salesRep', { phoneModels: phoneModels, customers: customers });
+				}
 			});
-			//console.log(customers);
-			res.render('pages/salesRep', { customers: customers });
-		} else {
-			res.render('pages/salesRep');
 		}
 	});
 });
