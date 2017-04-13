@@ -8,7 +8,13 @@ module.exports = db.define('paymentMethod', {
     primaryKey: true,
     autoIncrement: true
   },
-  cardNumber: { type: Sequelize.STRING(25), allowNull: false},
+  cardNumber: { 
+	type: Sequelize.STRING(25), 
+	allowNull: false,
+	get      : function()  {
+      return this.getDataValue('cardNumber').substr(this.getDataValue('cardNumber').length - 4);
+    },
+  },
   CVC: { type: Sequelize.INTEGER, allowNull: false},
   expirationDate: { type: Sequelize.DATE, allowNull: false},
 }, {timestamps: false, freezeTableName: true, tableName: 'PaymentMethod',
