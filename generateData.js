@@ -147,7 +147,8 @@ Promise.all(promises).then(function() {
 					for (var id  in customers) { 
 						// Add random number of orders
 						var customer = customers[id];
-						while(Math.random() < 0.75 && customer.orders.length > 0) {
+						var chanceOfItem = 1;
+						while(Math.random() < chanceOfItem && customer.orders.length > 0) {
 							promises.push(
 								new Promise(function(resolve, reject) {
 									var data = {
@@ -160,11 +161,13 @@ Promise.all(promises).then(function() {
 										orderId: customer.orders[Math.floor(Math.random()*customer.orders.length)].id
 									}
 									
-									models.OrderItem.create(data).then(function(result) {
+									models.Item.create(data).then(function(result) {
 										resolve(result.dataValues);
 									});
 								})
 							);
+							
+							chanceOfItem -= .3;
 						}
 					}
 					

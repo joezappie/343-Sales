@@ -22,8 +22,13 @@ router.get('/', function(req, res, next) {
 		where.phoneNumber = req.param('phoneNumber');
 	}
 	
+	if(req.param('isCompany') != null) {
+		where.isCompany = true;
+	}
+	
 	models.Customer.findAll({
-		where: where
+		where: where,
+		attributes: { exclude: ['password'] },
 	}).then(function(results) {
 		res.json(results);
 	});

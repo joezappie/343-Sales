@@ -2,7 +2,7 @@ var Sequelize = require('sequelize');
 var db = require("../database.js");
 
 // Customer Definition
-module.exports = db.define('orderItem', {
+module.exports = db.define('item', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -14,4 +14,5 @@ module.exports = db.define('orderItem', {
 	replacementDeadline: { type: Sequelize.DATE, allowNull: false},
 	refundDeadline: { type: Sequelize.DATE, allowNull: false},
 	refunded: { type: Sequelize.INTEGER },
-}, {timestamps: false, freezeTableName: true, tableName: 'OrderItem'});
+	bogoSerialNumber: { type: Sequelize.INTEGER },
+}, {timestamps: false, freezeTableName: true, tableName: 'Item'});
