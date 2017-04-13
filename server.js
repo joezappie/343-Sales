@@ -5,6 +5,7 @@
 var express    = require('express');        // call express
 var app        = express();                 // define our app using express
 var bodyParser = require('body-parser');
+var path = require('path');
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -22,7 +23,8 @@ var port = process.env.PORT || 8080;        // set our port to 8080
 // ROUTE SETUP
 // =============================================================================
 app.use(require('./routes'));
-
+console.log(__dirname);
+app.use('/assets', express.static(path.resolve(__dirname + '/static/')));
 
 // ERROR HANDLING
 // =============================================================================
