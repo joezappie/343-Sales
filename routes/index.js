@@ -9,6 +9,7 @@ router.use('/consumed', require('./consumed'));
 
 var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu:5000/inventory/";
 var SALES_BASE_URL = "http://vm343c.se.rit.edu/"
+var LOCAL_BASE_URL = "http://localhost:8080/"
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -39,10 +40,18 @@ router.get('/salesRep', function(req, res) {
 					customers = JSON.parse(body).map(function(cust) {
 						return cust;
 					});
-					res.render('pages/salesRep', { phoneModels: phoneModels, customers: customers });
+					var states = [];
+					request(LOCAL_BASE_URL + 'api/states/', function (error, response, body) {
+						if (!error && response.statusCode === 200) {
+							states = JSON.parse(body).map(function(st) {
+								return st;
+							});
+							res.render('pages/salesRep', { phoneModels: phoneModels, customers: customers, states: states });
+						}
+					});
 				}
 			});
-		}
+		};
 	});
 });
 
