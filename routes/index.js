@@ -1,6 +1,6 @@
 var express = require('express');
 var request = require('request');
-var async = require('async');
+var models = require(__base + 'models.js');
 var router = express.Router();
 
 // Route requires
@@ -34,22 +34,15 @@ router.get('/salesRep', function(req, res) {
 			phoneModels = JSON.parse(body).map(function(model) {
 				return model[0];
 			});
-			var customers = [];
-			request(SALES_BASE_URL + 'api/customer/', function (error, response, body) {
-				if (!error && response.statusCode === 200) {
-					customers = JSON.parse(body).map(function(cust) {
-						return cust;
-					});
-					var states = [];
-					request(SALES_BASE_URL + 'api/states/', function (error, response, body) {
-						if (!error && response.statusCode === 200) {
-							states = JSON.parse(body).map(function(st) {
-								return st;
-							});
-							res.render('pages/salesRep', { phoneModels: phoneModels, customers: customers, states: states });
-						}
-					});
+			
+			models.Customer.findAll({
+				where: {
+					isCompany: true,
 				}
+			}).then(function(customers) {
+				models.TaxRates.findAll().then(function(states) {
+					res.render('pages/salesRep', { phoneModels: phoneModels, customers: customers, states: states });
+				});
 			});
 		};
 	});
