@@ -6,6 +6,10 @@
 	padding: 20px 0;
 }
 
+.container.topSpacing {
+	margin-top:30px;
+}
+
 .phoneContainer .card-title {
 	font-weight: 500;
 }
