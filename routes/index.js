@@ -33,14 +33,12 @@ router.get('/salesRep', function(req, res) {
 			phoneModels = JSON.parse(body).map(function(model) {
 				return model[0];
 			});
-			//console.log(phoneModels);
 			var customers = [];
 			request(SALES_BASE_URL + 'api/customer/', function (error, response, body) {
 				if (!error && response.statusCode === 200) {
 					customers = JSON.parse(body).map(function(cust) {
 						return cust;
 					});
-					//console.log(customers);
 					res.render('pages/salesRep', { phoneModels: phoneModels, customers: customers });
 				}
 			});

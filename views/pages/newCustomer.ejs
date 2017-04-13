@@ -3,9 +3,11 @@
 
 <script>
 $('.datepicker').pickadate({
-	selectMonths: true, // Creates a dropdown to control month
-	selectYears: 15 // Creates a dropdown of 15 years to control year
+	selectMonths: true,
+	selectYears: 15,
+	format: 'mm-yyyy'
 });
+
 </script>
 
 <head>
@@ -15,7 +17,7 @@ $('.datepicker').pickadate({
 <body>
 	<nav>
 		<div class="nav-wrapper teal darken-1">
-			<a href="/salesRep" class="brand-logo storeLogo">"\<"New Customer</a>
+			<a href="/salesRep" class="brand-logo storeLogo">New Customer</a>
 			<ul id="nav-mobile" class="right hide-on-med-and-down">
 				<li><a href="/">Sign Out</a></li>
 			</ul>
@@ -23,6 +25,7 @@ $('.datepicker').pickadate({
 	</nav>
 	<div class="w3-container">
 		<div class="row">
+			<label style="font-size:1.5rem;color:#000000;">Customer Information</label>
 			<form class="col s12">
 				<div class="row">
 					<div class="input-field col">
@@ -47,6 +50,7 @@ $('.datepicker').pickadate({
 					</div>
 				</div>
 
+				<label style="font-size:1.5rem;color:#000000;">Billing Information</label>
 				<div class="row">
 					<div class="input-field col">
 						<i class="material-icons prefix">payment</i>
@@ -61,7 +65,6 @@ $('.datepicker').pickadate({
 					<div class="input-field col">
 						<i class="material-icons prefix">today</i>
 	          <input id="date" type="date" class="datepicker">
-	          <label for="date">Expiration Date</label>
 					</div>
 					<div class="input-field col">
 						<i class="material-icons prefix">location_on</i>
@@ -71,6 +74,9 @@ $('.datepicker').pickadate({
 				</div>
 			</form>
 		</div>
+		<button class="btn waves-effect waves-light" type="submit" name="action">
+			<a href="/salesRep" style="color: white">Create Customer</a>
+		</button>
 	</div>
 </body>
 </html>

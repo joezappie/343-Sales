@@ -5,6 +5,7 @@ var router = express.Router();
 router.use('/customer', require('./customer'));
 router.use('/order', require('./order'));
 router.use('/return', require('./return'));
+router.use('/states', require('./states'));
 
 /* GET api info */
 router.get('/', function(req, res, next) {
