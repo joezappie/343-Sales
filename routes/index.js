@@ -41,7 +41,7 @@ router.get('/salesRep', function(req, res) {
 						return cust;
 					});
 					var states = [];
-					request(LOCAL_BASE_URL + 'api/states/', function (error, response, body) {
+					request(SALES_BASE_URL + 'api/states/', function (error, response, body) {
 						if (!error && response.statusCode === 200) {
 							states = JSON.parse(body).map(function(st) {
 								return st;
