@@ -1,5 +1,6 @@
 var Sequelize = require('sequelize');
 var db = require("../database.js");
+var models = require("../models.js");
 
 // Customer Definition
 module.exports = db.define('orders', {

@@ -14,4 +14,5 @@ module.exports = db.define('item', {
 	replacementDeadline: { type: Sequelize.DATE, allowNull: false},
 	refundDeadline: { type: Sequelize.DATE, allowNull: false},
 	refunded: { type: Sequelize.INTEGER },
+	bogoSerialNumber: { type: Sequelize.INTEGER },
 }, {timestamps: false, freezeTableName: true, tableName: 'Item'});

@@ -26,7 +26,7 @@ models.Orders.belongsTo(models.Customer, { as: 'customer', onDelete: 'CASCADE', 
 models.Orders.belongsTo(models.Address, { as: 'shippingAddress', onDelete: 'CASCADE', foreignKey: { name: 'shippingAddressId', allowNull: false }});
 models.Orders.belongsTo(models.PaymentMethod, { as: 'paymentMethod', onDelete: 'CASCADE', foreignKey: { name: 'paymentMethodId', allowNull: false }});
 models.Item.belongsTo(models.Orders, { as: 'order', onDelete: 'CASCADE', foreignKey: { name: 'orderId', allowNull: false }});
-models.Orders.hasMany(models.Item, { foreignKey: 'orderId' });
+models.Orders.hasMany(models.Item, { as: 'items', foreignKey: 'orderId' });
 
 // Payment Method Relations
 models.PaymentMethod.belongsTo(models.Address, { as: 'billingAddress', onDelete: 'CASCADE', foreignKey: { name: 'billingAddressId', allowNull: false }})
