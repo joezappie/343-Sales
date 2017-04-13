@@ -12,7 +12,9 @@ router.get('/', function(req,res,next){
 
 	var where = {order: {}};
 	
-	if(req.param('orderId') != null) {
+	var orderId = parseInt(req.param('orderId'));
+	
+	if(!isNaN(orderId)) {
 		where.order.id = parseInt(req.param('orderId'));
 	} else {
 		res.status(400).send('400 Bad request: invalid parameters');
