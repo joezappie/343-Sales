@@ -1,82 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<script>
-$('.datepicker').pickadate({
-	selectMonths: true,
-	selectYears: 15,
-	format: 'mm-yyyy'
-});
-
-</script>
-
-<head>
-	<title>New Customer</title>
-	<%- include header.ejs %>
-</head>
-<body>
-	<nav>
-		<div class="nav-wrapper teal darken-1">
-			<a href="/salesRep" class="brand-logo storeLogo">New Customer</a>
-			<ul id="nav-mobile" class="right hide-on-med-and-down">
-				<li><a href="/">Sign Out</a></li>
-			</ul>
-		</div>
-	</nav>
-	<div class="w3-container">
-		<div class="row">
-			<label style="font-size:1.5rem;color:#000000;">Customer Information</label>
-			<form class="col s12">
+	<script>
+		$('.datepicker').pickadate({
+			selectMonths: true,
+			selectYears: 15,
+			format: 'mm-yyyy'
+		});
+		
+	</script>
+	<head>
+		<title>New Customer</title>
+		<%- include header.ejs %>
+	</head>
+	<body>
+		<nav>
+			<div class="nav-wrapper teal darken-1">
+				<a href="/salesRep" class="brand-logo storeLogo">New Customer</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="/">Sign Out</a></li>
+				</ul>
+			</div>
+		</nav>
+		<div class='container topSpacing'>
+			<% if(typeof errors != 'undefined'){ %>
+				<% errors.forEach(function(err) { %>
+					<div><%= err.input %> <%= err.msg %></div>
+				<% }); %>
+			<% } %>
+			
+			<div class="w3-container">
 				<div class="row">
-					<div class="input-field col">
-						<i class="material-icons prefix">business</i>
-	          <input id="lastName" type="text" class="validate">
-	          <label for="lastName">Company Name</label>
-					</div>
-					<div class="input-field col">
-						<i class="material-icons prefix">account_circle</i>
-	          <input id="firstName" type="text" class="validate">
-	          <label for="firstName">Contact Name</label>
-					</div>
-					<div class="input-field col">
-						<i class="material-icons prefix">email</i>
-	          <input id="email" type="text" class="validate">
-	          <label for="email">Email Address</label>
-					</div>
-					<div class="input-field col">
-						<i class="material-icons prefix">phone</i>
-	          <input id="phone" type="text" class="validate">
-	          <label for="phone">Phone Number</label>
-					</div>
+					<form class="col s12" method="POST" action="">
+						<label style="font-size:1.5rem;color:#000000;">Customer Information</label>
+						<div class="row">
+							<div class="input-field col s3">
+								<i class="material-icons prefix">business</i>
+								<input id="lastName" name="lastName" type="text" class="validate">
+								<label for="lastName">Company Name</label>
+							</div>
+							<div class="input-field col s3">
+								<i class="material-icons prefix">account_circle</i>
+								<input id="firstName" name="firstName" type="text" class="validate">
+								<label for="firstName">Contact Name</label>
+							</div>
+							<div class="input-field col s3">
+								<i class="material-icons prefix">email</i>
+								<input id="email" name="email" type="text" class="validate">
+								<label for="email">Email Address</label>
+							</div>
+							<div class="input-field col s3">
+								<i class="material-icons prefix">phone</i>
+								<input id="phone" name="phone" type="text" class="validate">
+								<label for="phone">Phone Number</label>
+							</div>
+						</div>
+						<label style="font-size:1.5rem;color:#000000;">Billing Information</label>
+						<div class="row">
+							<div class="input-field col s3">
+								<i class="material-icons prefix">payment</i>
+								<input id="card_number" name="card_number" type="text" class="validate">
+								<label for="card_number">Card Number</label>
+							</div>
+							<div class="input-field col s3">
+								<i class="material-icons prefix">payment</i>
+								<input id="cvc" name="cvc" type="text" class="validate">
+								<label for="cvc">CVC Code</label>
+							</div>
+							<div class="input-field col s3">
+								<i class="material-icons prefix">today</i>
+								<input id="expiration_date" name="expiration_date" type="date" class="datepicker">
+							</div>
+						</div>
+						<div class="row">
+							<div class="input-field col s4">
+								<i class="material-icons prefix">today</i>
+								<input id="address" name="address" type="text" class="validate">
+								<label for="address">Address</label>
+							</div>
+							<div class="input-field col s2">
+								<input id="city" name="city" type="text" class="validate">
+								<label for="city">City</label>
+							</div>
+							<div class="input-field col s2">
+								<select class="browser-default" id="state" name="state">
+									<option value="" disabled selected>Select State/Territory</option>
+									<% states.forEach(function(st) { %>
+										<option value="<%= st.id %>"><%= st.state %></option>
+									<% }); %>
+								</select>
+							</div>
+							<div class="input-field col s1">
+								<input id="zipcode" name="zipcode" type="text" class="validate">
+								<label for="zipcode">Zip Code</label>
+							</div>
+						</div>
+						<button class="btn waves-effect waves-light" type="submit" name="action">
+							Create Customer
+							<i class="material-icons right">send</i>
+						</button>
+					</form>
 				</div>
-
-				<label style="font-size:1.5rem;color:#000000;">Billing Information</label>
-				<div class="row">
-					<div class="input-field col">
-						<i class="material-icons prefix">payment</i>
-	          <input id="card_number" type="text" class="validate">
-	          <label for="card_number">Card Number</label>
-					</div>
-					<div class="input-field col">
-						<i class="material-icons prefix">payment</i>
-	          <input id="cvc" type="text" class="validate">
-	          <label for="cvc">CVC Code</label>
-					</div>
-					<div class="input-field col">
-						<i class="material-icons prefix">today</i>
-	          <input id="date" type="date" class="datepicker">
-					</div>
-					<div class="input-field col">
-						<i class="material-icons prefix">location_on</i>
-	          <input id="billingAddress" type="text" class="validate">
-	          <label for="billingAddress">Billing Address</label>
-					</div>
-				</div>
-			</form>
+			</div>
 		</div>
-		<button class="btn waves-effect waves-light" type="submit" name="action">
-			<a href="/salesRep" style="color: white">Create Customer</a>
-		</button>
-	</div>
-</body>
+	</body>
 </html>
