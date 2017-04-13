@@ -11,7 +11,13 @@ module.exports = db.define('customer', {
     firstName: { type: Sequelize.STRING, allowNull: false},
     lastName: { type: Sequelize.STRING, allowNull: false},
     email: { type: Sequelize.STRING, allowNull: false},
-    password: { type: Sequelize.STRING(32), allowNull: false},
+    password: { 
+		type: Sequelize.STRING(32), 
+		allowNull: false,
+		get: function()  {
+			return null;
+		},
+	},
     phoneNumber:  { type: Sequelize.STRING(20), allowNull: false},
     isCompany: {type: Sequelize.BOOLEAN, allowNull: false},
   },

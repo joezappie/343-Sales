@@ -11,7 +11,7 @@ module.exports = db.define('paymentMethod', {
   cardNumber: { 
 	type: Sequelize.STRING(25), 
 	allowNull: false,
-	get      : function()  {
+	get: function()  {
       return this.getDataValue('cardNumber').substr(this.getDataValue('cardNumber').length - 4);
     },
   },
