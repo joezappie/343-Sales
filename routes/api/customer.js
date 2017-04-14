@@ -1,4 +1,5 @@
 var models = require(__base + 'models.js');
+var helpers = require(__base + 'helpers.js');
 var express = require('express');
 var router = express.Router();
 
@@ -31,6 +32,16 @@ router.get('/', function(req, res, next) {
 		attributes: { exclude: ['password'] },
 	}).then(function(results) {
 		res.json(results);
+	});
+});
+
+router.post('/create', function(req, res, next) {
+	helpers.createCustomer(req.body).then(function(errors) {
+		res.json(errors);
+	}, function(errors) {
+		res.json(errors);
+	}).catch(function(errors) {
+		res.json({failed: true});
 	});
 });
 

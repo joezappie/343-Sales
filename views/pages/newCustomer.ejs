@@ -1,13 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-	<script>
-		$('.datepicker').pickadate({
-			selectMonths: true,
-			selectYears: 15,
-			format: 'mm-yyyy'
-		});
-		
-	</script>
 	<head>
 		<title>New Customer</title>
 		<%- include header.ejs %>
@@ -22,15 +14,43 @@
 			</div>
 		</nav>
 		<div class='container topSpacing'>
-			<% if(typeof errors != 'undefined'){ %>
-				<% errors.forEach(function(err) { %>
-					<div><%= err.input %> <%= err.msg %></div>
-				<% }); %>
-			<% } %>
+			<script>
+				$(document).ready(function() {
+
+					$("select").material_select();
+
+					$( "#createCustomer" ).submit(function( event ) {
+						$("#createCustomer .invalid").removeClass("invalid");
+
+						$.post("/api/customer/create", $("#createCustomer").serialize(), function( response ) {
+							console.log(response);
+							if(response.hasOwnProperty("success") && response.success) {
+								$("#createCustomer .invalid").removeClass("invalid");
+								$("#createCustomer").trigger("reset");
+								Materialize.toast('New business customer added', 4000);
+							} else if(response.hasOwnProperty("errors")) {
+								for(var input in response.error) {
+									$("#" + input).addClass("invalid");
+									$("#" + input + " ~ label").attr("data-error", response.error[input]);
+								};
+							}
+						}, "json");
+						
+						event.preventDefault();
+					});
+					
+					$('.datepicker').pickadate({
+						selectMonths: true,
+						selectYears: 15,
+						format: 'yyyy/mm'
+					});
+				});
+			</script>
 			
 			<div class="w3-container">
 				<div class="row">
-					<form class="col s12" method="POST" action="">
+					<form id='createCustomer' class="col s12" method="POST" action="">
+						<input type='hidden' id='isCompany' name='isCompany' value='1' />
 						<label style="font-size:1.5rem;color:#000000;">Customer Information</label>
 						<div class="row">
 							<div class="input-field col s3">
@@ -54,26 +74,27 @@
 								<label for="phone">Phone Number</label>
 							</div>
 						</div>
+						<div style='height:30px;'></div>
 						<label style="font-size:1.5rem;color:#000000;">Billing Information</label>
 						<div class="row">
-							<div class="input-field col s3">
+							<div class="input-field col s4">
 								<i class="material-icons prefix">payment</i>
 								<input id="card_number" name="card_number" type="text" class="validate">
 								<label for="card_number">Card Number</label>
 							</div>
-							<div class="input-field col s3">
-								<i class="material-icons prefix">payment</i>
+							<div class="input-field col s2">
 								<input id="cvc" name="cvc" type="text" class="validate">
 								<label for="cvc">CVC Code</label>
 							</div>
 							<div class="input-field col s3">
 								<i class="material-icons prefix">today</i>
-								<input id="expiration_date" name="expiration_date" type="date" class="datepicker">
+								<input id="expiration_date" name="expiration_date" type="date" class="datepicker validate">
+								<label for="expiration_date">Expiration</label>
 							</div>
 						</div>
-						<div class="row">
+						<div class="row" style='margin-top:20px;'>
 							<div class="input-field col s4">
-								<i class="material-icons prefix">today</i>
+								<i class="material-icons prefix">location_on</i>
 								<input id="address" name="address" type="text" class="validate">
 								<label for="address">Address</label>
 							</div>
@@ -82,7 +103,7 @@
 								<label for="city">City</label>
 							</div>
 							<div class="input-field col s2">
-								<select class="browser-default" id="state" name="state">
+								<select class="browser-default validate" id="state" name="state">
 									<option value="" disabled selected>Select State/Territory</option>
 									<% states.forEach(function(st) { %>
 										<option value="<%= st.id %>"><%= st.state %></option>
@@ -94,6 +115,7 @@
 								<label for="zipcode">Zip Code</label>
 							</div>
 						</div>
+						<div style='height:30px;'></div>
 						<button class="btn waves-effect waves-light" type="submit" name="action">
 							Create Customer
 							<i class="material-icons right">send</i>
