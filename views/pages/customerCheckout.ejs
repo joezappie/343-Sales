@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Sales Homepage - Checkout</title>
+	<%- include header.ejs %>
+</head>
+<body>
+	<%- include consumer-navbar.ejs %>
+	<div class="container">
+		<div class="row">
+			<h1> </h1>
+		</div>
+		<div class="row">
+			<form class="col s6">
+				<div class="row">
+					<div class="input-field col s5">
+						<label>Credit Card Number</label>
+						<input id="creditCardNum" type="text" class="validate"/>
+					</div>
+					<div class="input-field col s5">
+						<Label>Cardholder Name</Label>
+						<input id="cardholderName" type="text" class="validate"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s2">
+						<label>Security Code</label>
+						<input id="securityCode" type="text" style="text-align:center;" class="validate"/>
+					</div>
+					<div class="input-field col s3 push-s1" style="text-align:right;">
+						<label>Expiration Date:</label>
+					</div>
+					<div class="input-field col s2 push-s1">
+						<!--label>Expiration Date</label-->
+						<select id="expirationDateMonth">
+					    <option value="1">January</option>
+					    <option value="2">Febrary</option>
+							<option value="3">March</option>
+							<option value="4">April</option>
+							<option value="5">May</option>
+							<option value="6">June</option>
+							<option value="7">July</option>
+							<option value="8">August</option>
+							<option value="9">September</option>
+							<option value="10">October</option>
+							<option value="11">November</option>
+							<option value="12">December</option>
+					  </select>
+					</div>
+					<div class="input-field col s2 push-s1">
+						<!--label>Expiration Date</label-->
+						<select id="expirationYear">
+					    <option value="1">2017</option>
+					    <option value="2">2018</option>
+							<option value="3">2019</option>
+							<option value="4">2020</option>
+							<option value="5">2021</option>
+							<option value="6">2022</option>
+							<option value="7">2023</option>
+							<option value="8">2024</option>
+							<option value="9">2025</option>
+							<option value="10">2026</option>
+							<option value="11">2027</option>
+					  </select>
+					</div>
+				</div>
+			</form>
+			<div class="col s6">
+				<div class="card-panel teal lighten-2">
+					Put Shopping cart info here?
+				</div>
+				<div class="card-panel teal lighten-2">
+					Here Too.
+				</div>
+				<div class="card-panel teal lighten-2">
+					This is one continuous block of space,
+					so it should work.
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
