@@ -53,7 +53,11 @@ router.get('/apiTest', function(req, res) {
 });
 
 router.get('/shoppingCart', function(req, res) {
-	res.render('pages/shoppingCart');
+	models.TaxRates.findAll().then(function(states) {
+		console.log("test");
+		console.log(states);
+		res.render('pages/shoppingCart', { states: states });
+	});
 });
 
 router.get('/customerCheckout', function(req, res) {
