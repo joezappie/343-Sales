@@ -3,9 +3,31 @@
 <head>
 	<title>Sales Homepage - Store</title>
 	<%- include header.ejs %>
+	<script src="assets/js/shoppingCart.js"></script>
 </head>
 <body>
 	<%- include consumer-navbar.ejs %>
-	Hello world
+	<div class="container storeContainer">
+		<nav class="storeBreadcrumbs transparent">
+			<div class="nav-wrapper">
+				<div class="col s12">
+					<a href="/" class="breadcrumb">Browse Phones</a>
+					<a href="/shoppingCart" class="breadcrumb">Shopping Cart</a>
+				</div>
+			</div>
+		</nav>
+		<table class="highlight cartTable">
+			<tbody class="cartTbody">
+				<h4 id="cartEmptyState">
+					No Phones are in your Shopping Cart yet!
+				</h4>
+			</tbody>
+		</table>
+		<button class="btn waves-effect waves-light checkoutButton disabled" type="submit" name="action">
+			Checkout
+			<i class="material-icons right">send</i>
+		</button>
+	</div>
+	</div>
 </body>
 </html>
