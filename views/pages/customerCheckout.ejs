@@ -85,21 +85,12 @@
 					</div>
 					<div class="input-field col s3">
 						<!--I couldn't get this to work.-->
-						<% /* %>
-						<select class="browser-default">
-      				<option value="" disabled selected>Select State/Territory</option>
+						<select name='billing_state' id='billing_state' class="browser-default">
+							<option value="" disabled selected>Select State/Territory</option>
 							<% states.forEach(function(st) { %>
-							<option id="state_<%= st.id %>"><%= st.state %></option>
+								<option value="<%= st.id %>"><%= st.state %></option>
 							<% }); %>
-    				</select>
-						<% */ %>
-						<select id="billingState">
-							<option value="0">Place Holder</option>
-					    <option value="0">NJ</option>
-					    <option value="0">NY</option>
-							<option value="0">PA</option>
-							<option value="0">NH</option>
-					  </select>
+						</select>
 					</div>
 				</div>
 				<div class="row">
@@ -135,21 +126,12 @@
 					</div>
 					<div class="input-field col s3">
 						<!--I couldn't get this to work.-->
-						<% /* %>
-						<select class="browser-default">
-      				<option value="" disabled selected>Select State/Territory</option>
+						<select name='shipping_state' id='shipping_state' class="browser-default">
+							<option value="" disabled selected>Select State/Territory</option>
 							<% states.forEach(function(st) { %>
-							<option id="state_<%= st.id %>"><%= st.state %></option>
+								<option value="<%= st.id %>"><%= st.state %></option>
 							<% }); %>
-    				</select>
-						<% */ %>
-						<select id="shippingState">
-							<option value="0">Place Holder</option>
-					    <option value="0">NJ</option>
-					    <option value="0">NY</option>
-							<option value="0">PA</option>
-							<option value="0">NH</option>
-					  </select>
+						</select>
 					</div>
 				</div>
 				<div class="row">

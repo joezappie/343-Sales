@@ -62,7 +62,9 @@ router.get('/shoppingCart', function(req, res) {
 });
 
 router.get('/customerCheckout', function(req, res) {
-	res.render('pages/customerCheckout');
+	models.TaxRates.findAll().then(function(states) {
+		res.render('pages/customerCheckout', {states: states});
+	});
 });
 
 router.get('/newCustomer', function(req, res) {
