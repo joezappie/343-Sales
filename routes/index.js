@@ -35,7 +35,7 @@ router.get('/salesRep', function(req, res) {
 			phoneModels = JSON.parse(body).map(function(model) {
 				return model[0];
 			});
-			
+
 			models.Customer.findAll({
 				where: {
 					isCompany: true,
@@ -54,7 +54,15 @@ router.get('/apiTest', function(req, res) {
 });
 
 router.get('/shoppingCart', function(req, res) {
-	res.render('pages/shoppingCart');
+	models.TaxRates.findAll().then(function(states) {
+		console.log("test");
+		console.log(states);
+		res.render('pages/shoppingCart', { states: states });
+	});
+});
+
+router.get('/customerCheckout', function(req, res) {
+	res.render('pages/customerCheckout');
 });
 
 router.get('/newCustomer', function(req, res) {

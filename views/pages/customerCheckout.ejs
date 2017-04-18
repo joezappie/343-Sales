@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Sales Homepage - Checkout</title>
+	<%- include header.ejs %>
+</head>
+<body>
+	<%- include consumer-navbar.ejs %>
+	<div class="container">
+		<div class="row">
+			<form class="col s6">
+				<div class="row">
+					<h5>Credit Card Information:</h5>
+				</div>
+				<div class="row">
+					<div class="input-field col s5">
+						<label>Credit Card Number</label>
+						<input id="creditCardNum" type="text" class="validate"/>
+					</div>
+					<div class="input-field col s5">
+						<Label>Cardholder Name</Label>
+						<input id="cardholderName" type="text" class="validate"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s2">
+						<label>Security Code</label>
+						<input id="securityCode" type="text" style="text-align:center;" class="validate"/>
+					</div>
+					<div class="input-field col s3 offset-s1" style="text-align:right;">
+						<label>Expiration Date:</label>
+					</div>
+					<div class="input-field col s2">
+						<select id="expirationDateMonth">
+					    <option value="1">January</option>
+					    <option value="2">Febrary</option>
+							<option value="3">March</option>
+							<option value="4">April</option>
+							<option value="5">May</option>
+							<option value="6">June</option>
+							<option value="7">July</option>
+							<option value="8">August</option>
+							<option value="9">September</option>
+							<option value="10">October</option>
+							<option value="11">November</option>
+							<option value="12">December</option>
+					  </select>
+					</div>
+					<div class="input-field col s2">
+						<select id="expirationYear">
+					    <option value="2017">2017</option>
+					    <option value="2018">2018</option>
+							<option value="2019">2019</option>
+							<option value="2020">2020</option>
+							<option value="2021">2021</option>
+							<option value="2022">2022</option>
+							<option value="2023">2023</option>
+							<option value="2024">2024</option>
+							<option value="2025">2025</option>
+							<option value="2026">2026</option>
+							<option value="2027">2027</option>
+					  </select>
+					</div>
+				</div>
+				<div class="row">
+					<h5>Billing Address:</h5>
+				</div>
+				<div class="row">
+					<div class="input-field col s5">
+						<Label>Street Address</Label>
+						<input id="billingStreetAddress" type="text" class="validate"/>
+					</div>
+					<div class="input-field col s5">
+						<Label>City</Label>
+						<input id="billingCity" type="text" class="validate"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s3">
+						<Label>Zip Code</Label>
+						<input id="billingZipCode" type="text" class="validate"/>
+					</div>
+					<div class="input-field col s2 offset-s2">
+						<label>State:</label>
+					</div>
+					<div class="input-field col s3">
+						<!--I couldn't get this to work.-->
+						<% /* %>
+						<select class="browser-default">
+      				<option value="" disabled selected>Select State/Territory</option>
+							<% states.forEach(function(st) { %>
+							<option id="state_<%= st.id %>"><%= st.state %></option>
+							<% }); %>
+    				</select>
+						<% */ %>
+						<select id="billingState">
+							<option value="0">Place Holder</option>
+					    <option value="0">NJ</option>
+					    <option value="0">NY</option>
+							<option value="0">PA</option>
+							<option value="0">NH</option>
+					  </select>
+					</div>
+				</div>
+				<div class="row">
+					<h5>Shipping Address:</h5>
+				</div>
+				<div class="row">
+					<div class="input-field col s3">
+							<input type="checkbox" class="filled-in" id="shippingIsBilling" checked="checked" />
+      				<label for="shippingIsBilling">No changes</label>
+					</div>
+					<div class="input-field col s6 offset-s1">
+						<Label>Name</Label>
+						<input id="shippingName" type="text" class="validate"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s5">
+						<Label>Street Address</Label>
+						<input id="shippingStreetAddress" type="text" class="validate"/>
+					</div>
+					<div class="input-field col s5">
+						<Label>City</Label>
+						<input id="shippingCity" type="text" class="validate"/>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s3">
+						<Label>Zip Code</Label>
+						<input id="shippingZipCode" type="text" class="validate"/>
+					</div>
+					<div class="input-field col s2 offset-s2">
+						<label>State:</label>
+					</div>
+					<div class="input-field col s3">
+						<!--I couldn't get this to work.-->
+						<% /* %>
+						<select class="browser-default">
+      				<option value="" disabled selected>Select State/Territory</option>
+							<% states.forEach(function(st) { %>
+							<option id="state_<%= st.id %>"><%= st.state %></option>
+							<% }); %>
+    				</select>
+						<% */ %>
+						<select id="shippingState">
+							<option value="0">Place Holder</option>
+					    <option value="0">NJ</option>
+					    <option value="0">NY</option>
+							<option value="0">PA</option>
+							<option value="0">NH</option>
+					  </select>
+					</div>
+				</div>
+				<div class="row">
+					<button class="btn waves-effect waves-light" type="submit" name="action">
+						Submit
+						<i class="material-icons right">send</i>
+					</button>
+				</div>
+			</form>
+			<div class="col s6">
+				<div class="card-panel teal lighten-2">
+					Put Shopping cart info here?
+				</div>
+				<div class="card-panel teal lighten-2">
+					Here Too.
+				</div>
+				<div class="card-panel teal lighten-2">
+					This is one continuous block of space,
+					so it should work.
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
