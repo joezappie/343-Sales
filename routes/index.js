@@ -1,6 +1,7 @@
 var express = require('express');
 var request = require('request');
 var models = require(__base + 'models.js');
+var helpers = require(__base + 'helpers.js');
 var router = express.Router();
 
 // Route requires
@@ -57,7 +58,9 @@ router.get('/shoppingCart', function(req, res) {
 });
 
 router.get('/newCustomer', function(req, res) {
-	res.render('pages/newCustomer');
+	models.TaxRates.findAll().then(function(states) {
+		res.render('pages/newCustomer', {states: states});
+	});
 });
 
 module.exports = router;

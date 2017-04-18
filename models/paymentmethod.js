@@ -15,7 +15,7 @@ module.exports = db.define('paymentMethod', {
       return this.getDataValue('cardNumber').substr(this.getDataValue('cardNumber').length - 4);
     },
   },
-  CVC: { type: Sequelize.INTEGER, allowNull: false},
+  CVC: { type: Sequelize.STRING(3), allowNull: false},
   expirationDate: { type: Sequelize.DATE, allowNull: false},
 }, {timestamps: false, freezeTableName: true, tableName: 'PaymentMethod',
   instanceMethods : {
