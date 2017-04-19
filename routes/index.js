@@ -35,7 +35,7 @@ router.get('/salesRep', function(req, res) {
 			phoneModels = JSON.parse(body).map(function(model) {
 				return model[0];
 			});
-			
+
 			models.Customer.findAll({
 				where: {
 					isCompany: true,

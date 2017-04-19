@@ -1,0 +1,94 @@
+.storeLogo {
+	margin-left: 0;
+	font-size: 1.3em !important;
+}
+
+.store.nav-wrapper {
+	margin: auto;
+}
+
+.store.nav-wrapper, .storeContainer {
+	width: 80%;
+}
+
+.storeBreadcrumbs {
+	border: none;
+	box-shadow: none;
+}
+
+.storeBreadcrumbs .breadcrumb {
+	color: #9e9e9e;
+}
+
+.storeBreadcrumbs .breadcrumb:before {
+	color: #424242;
+}
+
+.storeBreadcrumbs .breadcrumb:last-child {
+	color: black;
+}
+
+.storeContainer {
+	padding: 20px 0;
+}
+
+.storeContainer .card-title {
+	font-weight: 500;
+}
+
+.card-action.phoneCardFooter {
+	display: flex;
+	align-items: center;
+	padding-top: 0;
+	padding-bottom: 0;
+	padding-right: 18px;
+}
+
+.quantitySelect {
+	display: inline-block;
+	margin: 0;
+	border-left: 1pt solid lightgray;
+	padding: 3px 0 3px 16px;
+}
+
+.quantitySelect > *, .addCartButton {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.quantitySelect > .select-wrapper {
+	width: 40px;
+}
+
+.qtyLabel {
+	font-weight: 500;
+	padding-right: 10px;
+}
+
+.quantitySelect .select-wrapper.caret {
+	margin: 0 !important;
+	top: 11px;
+}
+
+.quantitySelect input.select-dropdown {
+	margin: 0;
+	border: none;
+}
+
+.addCartButton {
+	flex: 1 1 auto;
+	cursor: pointer;
+}
+
+.phonePrice {
+	font-size: 20px;
+	font-weight: 500;
+}
+
+.checkoutButton {
+	margin-top: 30px;
+}
+
+.cartTable {
+	margin-top: 20px;
+}

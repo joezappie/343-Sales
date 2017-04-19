@@ -3,15 +3,23 @@
 <head>
 	<title>Sales Homepage - Store</title>
 	<%- include header.ejs %>
+	<script src="/assets/js/browse.js"></script>
 </head>
 <body>
 	<%- include consumer-navbar.ejs %>
-	
-	<div class="container phoneContainer">
-		<div class="row">
 
+	<div class="container storeContainer">
+		<nav class="storeBreadcrumbs transparent">
+			<div class="nav-wrapper">
+				<div class="col s12">
+					<a href="/" class="breadcrumb">Browse Phones</a>
+				</div>
+			</div>
+		</nav>
+		<div class="row">
 			<% phoneModels.forEach(function(phoneModel) { %>
-				<div class="col s6">
+				<% var phoneName = phoneModel.fields.description %>
+				<div class="col s4">
 					<div class="card sticky-action">
 						<div class="card-image waves-effect waves-block waves-light">
 							<img class="activator" src="/assets/phoneImg.jpg">
@@ -36,10 +44,10 @@
 							<p>Here is some more information about this product that is only revealed once clicked on.</p>
 						</div>
 						<div class="card-action phoneCardFooter">
-	            <a class="addCartButton" href="#">Add to Cart</a>
+							<a class="addCartButton" type=<%= phoneModel.pk %>>Add to Cart</a>
 							<div class="input-field quantitySelect">
-							  <div class="qtyLabel">Qty:</div>
-								<select>
+								<div class="qtyLabel">Qty:</div>
+								<select name=<%= phoneModel.pk %>>
 									<option value="1" selected>1</option>
 									<option value="2">2</option>
 									<option value="3">3</option>
