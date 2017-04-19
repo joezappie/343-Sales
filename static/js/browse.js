@@ -9,10 +9,11 @@ $(document).ready(function() {
 	$.get('/consumed/inventory/models', function(data) {
 		JSON.parse(data).forEach(function(item) {
 			var phoneModel = item[0];
-			phoneModels[phoneModel.pk] = phoneModel.fields;
-			phoneModels[phoneModel.pk].quantity = Object.keys(phones).length === 0 ? 0 : phones[phoneModel.pk].quantity;
+			var id = phoneModel.pk;
+			phoneModels[id] = phoneModel.fields;
+			phoneModels[id].quantity = phones && phones[id] ? phones[id].quantity : 0;
 
-			selectedQtys[phoneModel.pk] = 1;
+			selectedQtys[id] = 1;
 		});
 	});
 
