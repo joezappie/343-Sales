@@ -1,3 +1,7 @@
+.select-dropdown.invalid {
+	border-bottom:1px solid red !important;
+}
+
 .container.topSpacing {
 	margin-top:30px;
 }
@@ -7,10 +11,6 @@
 	margin: 0;
 	height: 1rem;
 	width: 55px;
-}
-
-select.validate.invalid {
-	border:1px solid #ff0000 !important;
 }
 
 .toast {
@@ -25,4 +25,9 @@ select.validate.invalid {
   margin-left:auto;
   margin-right:auto;
   min-width:70%;
+}
+
+
+.sectionSpacer {
+	height:20px;
 }
