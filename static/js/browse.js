@@ -11,7 +11,7 @@ $(document).ready(function() {
 			var phoneModel = item[0];
 			var id = phoneModel.pk;
 			phoneModels[id] = phoneModel.fields;
-			phoneModels[id].quantity = phones && Object.keys(phones).length === 0 ? phones[id].quantity : 0;
+			phoneModels[id].quantity = phones && phones[id] ? phones[id].quantity : 0;
 
 			selectedQtys[id] = 1;
 		});
