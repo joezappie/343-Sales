@@ -16,10 +16,7 @@ var LOCAL_BASE_URL = "http://localhost:8080/"
 router.get('/', function(req, res, next) {
 	request(INVENTORY_BASE_URL + 'models/all', function (error, response, body) {
 		if (!error && response.statusCode === 200) {
-			//console.log(typeof(body));
-			var phoneModels = JSON.parse(body).map(function(model) {
-				return model[0];
-			});
+			var phoneModels = JSON.parse(body);
 
 			res.render('pages/index', { phoneModels: phoneModels });
 		} else {

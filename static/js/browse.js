@@ -7,10 +7,9 @@ $(document).ready(function() {
 	var phones = JSON.parse(localStorage.getItem('phones'));
 
 	$.get('/consumed/inventory/models', function(data) {
-		JSON.parse(data).forEach(function(item) {
-			var phoneModel = item[0];
-			var id = phoneModel.pk;
-			phoneModels[id] = phoneModel.fields;
+		JSON.parse(data).forEach(function(phoneModel) {
+			var id = phoneModel.id;
+			phoneModels[id] = phoneModel;
 			phoneModels[id].quantity = phones && phones[id] ? phones[id].quantity : 0;
 
 			selectedQtys[id] = 1;

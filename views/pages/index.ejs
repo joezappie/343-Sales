@@ -18,36 +18,36 @@
 		</nav>
 		<div class="row">
 			<% phoneModels.forEach(function(phoneModel) { %>
-				<% var phoneName = phoneModel.fields.description %>
+				<% var phoneName = phoneModel.description %>
 				<div class="col s4">
 					<div class="card sticky-action">
 						<div class="card-image waves-effect waves-block waves-light">
-							<img class="activator" src="/assets/phones/<%= phoneModel.pk %>.jpg">
+							<img class="activator" src="/assets/phones/<%= phoneModel.id %>.jpg">
 						</div>
 						<div class="card-content">
 							<span class="card-title activator grey-text text-darken-4">
-								<%= phoneModel.fields.description %>
+								<%= phoneModel.description %>
 								<i class="material-icons right">more_vert</i>
 							</span>
 							<div class="phonePrice blue-grey-text text-darken-2">
-								<%= '$' + phoneModel.fields.price %>
+								<%= '$' + phoneModel.price %>
 							</div>
 						</div>
 						<div class="card-reveal">
 							<span class="card-title grey-text text-darken-4">
-								<%= phoneModel.fields.description %>
+								<%= phoneModel.description %>
 								<i class="material-icons right">close</i>
 							</span>
 							<div class="phonePrice blue-grey-text text-darken-1">
-								<%= '$' + phoneModel.fields.price %>
+								<%= '$' + phoneModel.price %>
 							</div>
 							<p>Here is some more information about this product that is only revealed once clicked on.</p>
 						</div>
 						<div class="card-action phoneCardFooter">
-							<a class="addCartButton" type=<%= phoneModel.pk %>>Add to Cart</a>
+							<a class="addCartButton" type=<%= phoneModel.id %>>Add to Cart</a>
 							<div class="input-field quantitySelect">
 								<div class="qtyLabel">Qty:</div>
-								<select name=<%= phoneModel.pk %>>
+								<select name=<%= phoneModel.id %>>
 									<option value="1" selected>1</option>
 									<option value="2">2</option>
 									<option value="3">3</option>
