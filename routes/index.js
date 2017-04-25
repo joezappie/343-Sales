@@ -15,13 +15,17 @@ var LOCAL_BASE_URL = "http://localhost:8080/"
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	request(INVENTORY_BASE_URL + 'models/all', function (error, response, body) {
+		
+		var phoneModels = [];
+		
+		// Check if the request was successful
 		if (!error && response.statusCode === 200) {
-			var phoneModels = JSON.parse(body);
-
-			res.render('pages/index', { phoneModels: phoneModels });
-		} else {
-			res.render('pages/index');
-		}
+			phoneModels = JSON.parse(body).map(function(model) {
+				return model[0];
+			});
+		} 
+		
+		res.render('pages/index', { phoneModels: phoneModels });
 	});
 });
 
@@ -30,7 +34,7 @@ router.get('/salesRep', function(req, res) {
 	request(INVENTORY_BASE_URL + 'models/all', function (error, response, body) {
 		if (!error && response.statusCode === 200) {
 			phoneModels = JSON.parse(body).map(function(model) {
-				return model[0];
+				return model;
 			});
 
 			models.Customer.findAll({
@@ -51,7 +55,17 @@ router.get('/apiTest', function(req, res) {
 });
 
 router.get('/shoppingCart', function(req, res) {
-	res.render('pages/shoppingCart');
+	models.TaxRates.findAll().then(function(states) {
+		console.log("test");
+		console.log(states);
+		res.render('pages/shoppingCart', { states: states });
+	});
+});
+
+router.get('/customerCheckout', function(req, res) {
+	models.TaxRates.findAll().then(function(states) {
+		res.render('pages/customerCheckout', {states: states});
+	});
 });
 
 router.get('/newCustomer', function(req, res) {

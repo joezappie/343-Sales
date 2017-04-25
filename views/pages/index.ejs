@@ -17,6 +17,12 @@
 			</div>
 		</nav>
 		<div class="row">
+			<% if(phoneModels.length == 0) { %>
+				<div class="col s12">
+					<h5>Opps, looks like somethings not right.</h5>
+					<div>Please try refreshing the page.</div>
+				</div>
+			<% } %>
 			<% phoneModels.forEach(function(phoneModel) { %>
 				<% var phoneName = phoneModel.description %>
 				<div class="col s4">
