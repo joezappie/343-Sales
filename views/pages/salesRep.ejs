@@ -43,6 +43,11 @@ function findTotal(){
 						<label style="font-size:1.5rem;color:#000000;">Choose Phone Models</label>
 						<div class="row" style='margin:auto;'>
 							<ul class="collection with-header phoneList">
+								<% if(phoneModels.length == 0) { %>
+									<li class="collection-item">
+										Opps, failed to load the phone models. Please try again later
+									</li>
+								<% } %>
 								<% phoneModels.forEach(function(phoneModel) { %>
 								<li class="collection-item">
 									<%= phoneModel.fields.description %>

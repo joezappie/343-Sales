@@ -32,21 +32,28 @@ router.get('/', function(req, res, next) {
 router.get('/salesRep', function(req, res) {
 	var phoneModels = [];
 	request(INVENTORY_BASE_URL + 'models/all', function (error, response, body) {
+		var phoneModels = [];
+		
+		// Check if the request was successful
 		if (!error && response.statusCode === 200) {
 			phoneModels = JSON.parse(body).map(function(model) {
 				return model;
 			});
-
-			models.Customer.findAll({
-				where: {
-					isCompany: true,
-				}
-			}).then(function(customers) {
-				models.TaxRates.findAll().then(function(states) {
-					res.render('pages/salesRep', { phoneModels: phoneModels, customers: customers, states: states });
-				});
-			});
 		};
+		
+		models.Customer.findAll({
+			where: {
+				isCompany: true,
+			}
+		}).then(function(customers) {
+			models.TaxRates.findAll().then(function(states) {
+				res.render('pages/salesRep', { phoneModels: phoneModels, customers: customers, states: states });
+			}).catch(function(err) {
+				res.json("oops");
+			});
+		}).catch(function(err) {
+			res.send(err);
+		});
 	});
 });
 
