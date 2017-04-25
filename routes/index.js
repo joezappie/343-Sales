@@ -49,7 +49,7 @@ router.get('/salesRep', function(req, res) {
 			models.TaxRates.findAll().then(function(states) {
 				res.render('pages/salesRep', { phoneModels: phoneModels, customers: customers, states: states });
 			}).catch(function(err) {
-				res.json("oops");
+				res.send(err);
 			});
 		}).catch(function(err) {
 			res.send(err);
