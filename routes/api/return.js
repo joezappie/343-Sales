@@ -43,7 +43,7 @@ var db = [
 		"status": "original",
 		"replaceDeadline": "2017-04-22T20:51:26.908Z",
 		"refundDeadline": "2017-05-22T20:51:26.908Z"
-	}	
+	}
 ]
 
 // POST order return
@@ -61,13 +61,13 @@ router.post('/', function(req, res, next) {
 	replace = req.body.replace;
 	orderId = req.body.orderId;
 	serialIds = req.body.serialIds;
-	
-	if (!replace || !orderId || !serialIds) {
+
+	if (replace === null || replace === undefined || !orderId || !serialIds) {
 		res.status("400").send("Missing required parameters");
 	}
-	
+
 	var dbcalls = [];
-	
+
 	/*
 	if (replace == 'true') {
 		serialIds.forEach(function(item, index) {
@@ -79,7 +79,7 @@ router.post('/', function(req, res, next) {
 			});
 		});
 	}
-	
+
 	async.series(dbcalls, function(err) {
 		db.query("SELECT * FROM Item", function(err, rows) {
 			console.log("test");
@@ -112,9 +112,9 @@ router.post('/', function(req, res, next) {
 			res.status("400").send("Invalid serialId: " + item);
 		}
 	});
-	
+
 	res.json(db);
-	
+
 });
 
 module.exports = router;
