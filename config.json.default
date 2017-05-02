@@ -1,7 +1,12 @@
 {
-	"dialect": "mysql",
-	"host" : "HOSTNAME",
-	"user" : "YOURUSER",
-	"password" : "YOURPASSWORD",
-	"database" : "YOURDATABASE"
+	"dialect": "sqlite",
+	"host" : "localhost",
+	"user" : null,
+	"password" : null,
+	"database" : null,
+	"pool": {
+		"maxConnections": 20,
+		"maxIdleTime": 30000
+	},
+	"storage": "sales.sql"
 }
