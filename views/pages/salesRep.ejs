@@ -50,9 +50,9 @@ function findTotal(){
 								<% } %>
 								<% phoneModels.forEach(function(phoneModel) { %>
 								<li class="collection-item">
-									<%= phoneModel.fields.description %>
+									<%= phoneModel.description %>
 									<a href="#!" class="secondary-content">
-											<label><%= '$' + phoneModel.fields.price %></label>
+											<label><%= '$' + phoneModel.price %></label>
 									<input onblur="findTotal()" value=0 name="phone_tot" type="text" class="validate phoneCount"/><br>
 									</a>
 									<div style='clear:both;'></div>
