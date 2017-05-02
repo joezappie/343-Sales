@@ -12,19 +12,56 @@ var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu:5000/inventory/";
 var SALES_BASE_URL = "http://vm343c.se.rit.edu/"
 var LOCAL_BASE_URL = "http://localhost:8080/"
 
+var stubbedPhones = [
+  {
+    "modelID": 1,
+    "description": "High End Phone",
+    "img_path": "static/images/high.png",
+    "price": 600.00,
+    "deletedAt": null,
+  },
+  {
+    "modelID": 2,
+    "description": "Medium Tier phone",
+    "img_path": "static/images/med.png",
+    "price": 500.00,
+    "deletedAt": null,
+  },
+  {
+    "modelID":3,
+    "description": "Budget Model Phone",
+    "img_path": "static/images/low_end.png",
+    "price": 300.00,
+    "deletedAt": null,
+  },
+  {
+    "modelID": 4,
+    "description": "Retro Throwback Model",
+    "img_path": "static/images/retro.png",
+    "price": 200.00,
+    "deletedAt": null,
+  },
+  {
+    "modelID": 5,
+    "description": "Retro Throwback Model",
+    "img_path": "static/images/retro.png",
+    "price": 200.00,
+    "deletedAt": null,
+  }
+];
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	request(INVENTORY_BASE_URL + 'models/all', function (error, response, body) {
-		
 		var phoneModels = [];
-		
+
 		// Check if the request was successful
 		if (!error && response.statusCode === 200) {
-			phoneModels = JSON.parse(body).map(function(model) {
-				return model[0];
-			});
-		} 
-		
+			phoneModels = JSON.parse(body);
+		} else {
+			phoneModels = stubbedPhones;
+		}
+
 		res.render('pages/index', { phoneModels: phoneModels });
 	});
 });
@@ -33,14 +70,14 @@ router.get('/salesRep', function(req, res) {
 	var phoneModels = [];
 	request(INVENTORY_BASE_URL + 'models/all', function (error, response, body) {
 		var phoneModels = [];
-		
+
 		// Check if the request was successful
 		if (!error && response.statusCode === 200) {
 			phoneModels = JSON.parse(body).map(function(model) {
 				return model;
 			});
 		};
-		
+
 		models.Customer.findAll({
 			where: {
 				isCompany: true,
