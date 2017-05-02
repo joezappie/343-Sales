@@ -123,6 +123,7 @@ module.exports = {
 							
 							models.PaymentMethod.create(paymentData).then(function(payment) {
 								response.success = true;
+								response.customer = customer;
 								resolve(response);
 							}).catch(function(err) {
 								reject(response);
