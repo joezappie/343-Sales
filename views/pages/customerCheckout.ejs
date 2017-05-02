@@ -55,10 +55,10 @@
 </script>
 <body>
 	<%- include consumer-navbar.ejs %>
-	<div class="container">
+	<div class="bigContainer" >
 		<div class="row">
 			<form class="col s12">
-				<div class="col s6">
+				<div class="col s8">
 					<div class="row">
 						<h5>Credit Card Information:</h5>
 					</div>
@@ -81,7 +81,7 @@
 							<label>Expiration Date:</label>
 						</div>
 						<div class="input-field col s2">
-							<select id="expiration_date_month" name="expiration_date_month">
+							<select id="expiration_date_month" name="expiration_date_month" class="browser-default">
 						    <option value="1">January</option>
 						    <option value="2">Febrary</option>
 								<option value="3">March</option>
@@ -97,7 +97,7 @@
 						  </select>
 						</div>
 						<div class="input-field col s2">
-							<select id="expiration_year" name="expiration_year">
+							<select id="expiration_year" name="expiration_year" class="browser-default">
 						    <option value="2017">2017</option>
 						    <option value="2018">2018</option>
 								<option value="2019">2019</option>
@@ -135,7 +135,7 @@
 						</div>
 						<div class="input-field col s4">
 							<!--I couldn't get this to work.-->
-							<select id='billing_state' name='billing_state'>
+							<select id='billing_state' name='billing_state' class="browser-default">
 								<option value="" disabled selected>Select State/Territory</option>
 								<% states.forEach(function(st) { %>
 									<option value="<%= st.id %>"><%= st.state %></option>
@@ -176,7 +176,7 @@
 						</div>
 						<div class="input-field col s4">
 							<!--I couldn't get this to work.-->
-							<select id='shipping_state' name='shipping_state'>
+							<select id='shipping_state' name='shipping_state' class="browser-default">
 								<option value="" disabled selected>Select State/Territory</option>
 								<% states.forEach(function(st) { %>
 									<option value="<%= st.id %>"><%= st.state %></option>
@@ -191,7 +191,7 @@
 						</button>
 					</div>
 				</div>
-				<div class="col s6">
+				<div class="col s4">
 					<div class="card-panel teal lighten-2">
 						Put Shopping cart info here?
 					</div>
