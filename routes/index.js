@@ -61,6 +61,19 @@ router.get('/apiTest', function(req, res) {
 	res.render('pages/apiTest');
 });
 
+router.get('/recall', function(req, res, next) {
+	res.render('pages/recallForm');
+});
+
+router.post('/recall', function(req, res, next) {
+	var phoneModel = req.body.phoneModel;
+	request(INVENTORY_BASE_URL + 'recall/' + phoneModel, function (error, response, body) {
+		helpers.sendEmail(1).then(function() {
+			res.render('pages/recallForm');
+		});
+	});
+});
+
 router.get('/shoppingCart', function(req, res) {
 	models.TaxRates.findAll().then(function(states) {
 		console.log("test");
