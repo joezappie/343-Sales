@@ -92,3 +92,8 @@
 .cartTable {
 	margin-top: 20px;
 }
+
+.bigContainer {
+	width: 90%;
+	margin: auto;
+}
