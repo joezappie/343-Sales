@@ -3,7 +3,7 @@ var request = require('request');
 var router = express.Router();
 
 /* URLs for consumed APIs */
-var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/api/";
+var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu:5000/";
 var ACCOUNTING_BASE_URL = "http://vm343e.se.rit.edu/";
 
 /* GET home page. */
@@ -42,7 +42,6 @@ function postJSON(url, json, res) {
 	});
 }
 
-
 /* Load all the phones in inventory */
 router.get('/inventory', function(req, res, next) {
 	loadJSON(INVENTORY_BASE_URL + "inventory", res);
@@ -50,8 +49,8 @@ router.get('/inventory', function(req, res, next) {
 
 /* Load phone models. Use ?model GET param to load specific model else it will get all */
 router.get('/inventory/models', function(req, res, next) {
-	var model = "ALL"
-	if(req.params.model) {
+	var model = "all";
+	if (req.params.model) {
 		model = req.params.model;
 	}
 	loadJSON(INVENTORY_BASE_URL + "inventory/models/" + model, res);

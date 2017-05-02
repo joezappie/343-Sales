@@ -1,5 +1,6 @@
 var models = require(__base + 'models.js');
 var validator = require('validator');
+var nodemailer = require('nodemailer');
 
 module.exports = {
 	createCustomer: function(info) {
@@ -39,16 +40,23 @@ module.exports = {
 					response.errors.cvc = 'Invalid CVC code';
 				}
 				
-				if(!info.hasOwnProperty("expiration_date") || !info.expiration_date) {
-					response.errors.expiration_date = 'Invalid expiration date';
-				} else {
-					// Requires a string that is formatted as YYYY/MM
-					var date = new Date(info.expiration_date + "/01");
-					if(date == null || isNaN(date.getTime())) {
-						response.errors.expiration_date = 'Invalid expiration date';
-					} else {
-						info.expiration_date = date.getTime() / 1000;
-					}			
+				var validExpirationDate = true;
+				if(!info.hasOwnProperty("expiration_month")) {
+					response.errors.expiration_month = 'Invalid';
+					validExpirationDate = false;
+				} 
+				
+				if(!info.hasOwnProperty("expiration_year")) {
+					response.errors.expiration_year = 'Invalid';
+					validExpirationDate = false;
+				}
+				
+				if(validExpirationDate) {
+					info.expiration_date = new Date(info.expiration_year + "/" + info.expiration_month + "/01");
+					if(info.expiration_date == null || isNaN(info.expiration_date.getTime())) {
+						response.errors.expiration_year = 'Invalid';
+						response.errors.expiration_month = 'Invalid';
+					}
 				}
 
 				if(!info.hasOwnProperty("address") || info.address < 3) {
@@ -132,6 +140,36 @@ module.exports = {
 					reject(response);
 				}
 			});
+		});
+	},
+	
+	sendEmail: function(phoneModel) {
+		return new Promise(function(resolve, reject) {
+			var emails = ["nns3455@rit.edu"];
+			
+			var transporter = nodemailer.createTransport({
+				"service" : "gmail",
+				"auth" : {
+					"user" : "krutzcorpsales@gmail.com",
+					"pass" : "Team$ales"
+				}
+			});
+			
+			var mailOptions = {
+				"from" : '"KrutzCorp Sales" <krutzcorpsales@gmail.com>',
+				"to" : emails.join(),
+				"subject" : "Phone Recall",
+				"text" : "We recalled your phone, hit dat mufukin like button",
+				"html" : "<h1>We recalled your phone, hit surbscrib and SMASH dat mufukin like button</h1>"
+			};
+			
+			transporter.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					return console.log(error);
+				}
+				console.log("Messages sent successfully");
+			});
+			resolve();
 		});
 	}
 }

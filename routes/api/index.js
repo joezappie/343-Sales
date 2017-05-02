@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var helpers = require(__base + 'helpers.js');
 
 // Route requires
 router.use('/customer', require('./customer'));
