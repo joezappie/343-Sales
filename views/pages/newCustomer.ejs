@@ -49,15 +49,10 @@
 						<div class="row">
 							<div class="input-field col s3">
 								<i class="material-icons prefix">business</i>
-								<input id="lastName" name="lastName" type="text" class="validate">
-								<label for="lastName">Company Name</label>
+								<input id="company" name="lastName" type="text" class="validate">
+								<label for="company">Company Name</label>
 							</div>
-							<div class="input-field col s3">
-								<i class="material-icons prefix">account_circle</i>
-								<input id="firstName" name="firstName" type="text" class="validate">
-								<label for="firstName">Contact Name</label>
-							</div>
-							<div class="input-field col s3">
+							<div class="input-field col s4">
 								<i class="material-icons prefix">email</i>
 								<input id="email" name="email" type="text" class="validate">
 								<label for="email">Email Address</label>
@@ -69,7 +64,7 @@
 							</div>
 						</div>
 						<div class='sectionSpacer'></div>
-						<label style="font-size:1.5rem;color:#000000;">Billing Information</label>
+						<label style="font-size:1.5rem;color:#000000;">Payment</label>
 						<div class="row">
 							<div class="input-field col s4">
 								<i class="material-icons prefix">payment</i>
@@ -80,7 +75,7 @@
 								<input id="cvc" name="cvc" type="text" class="validate">
 								<label for="cvc">CVC Code</label>
 							</div>
-							<div class="input-field col s2">
+							<div class="input-field col s3">
 								<select name='expiration_month' id="expiration_month" class='validate'>
 									<option value="" disabled selected>Month</option>
 									<option value="1">01 - January</option>
@@ -99,7 +94,7 @@
 							  <label for="expiration_month">Expiration Date</label>
 							</div>
 							<div class="input-field col s1">
-								<select name='expiration_year'	id="expiration_year" class='validate'>
+								<select name='expiration_year' id="expiration_year" class='validate'>
 									<option value="" disabled selected>Year</option>
 									<% for(var i=new Date().getFullYear(); i< new Date().getFullYear() + 15; i++) {%>
 									   <option value="<%= i %>"><%= i %></option>
@@ -107,27 +102,76 @@
 							  </select>
 							</div>
 						</div>
+						<div class='sectionSpacer'></div>
+						<label style="font-size:1.5rem;color:#000000;">Billing Address</label>
+						<div class="row" style='margin-top:20px;'>
+							<div class="input-field col s4">
+								<i class="material-icons prefix">account_circle</i>
+								<input id="billing_firstname" name="billing_firstname" type="text" class="validate">
+								<label for="billing_firstname">First Name</label>
+							</div>
+							<div class="input-field col s4">
+								<input id="billing_lastname" name="billing_lastname" type="text" class="validate">
+								<label for="billing_lastname">Last Name</label>
+							</div>
+						</div>
 						<div class="row" style='margin-top:20px;'>
 							<div class="input-field col s4">
 								<i class="material-icons prefix">location_on</i>
-								<input id="address" name="address" type="text" class="validate">
-								<label for="address">Address</label>
+								<input id="billing_address" name="billing_address" type="text" class="validate">
+								<label for="billing_address">Address</label>
 							</div>
 							<div class="input-field col s2">
-								<input id="city" name="city" type="text" class="validate">
-								<label for="city">City</label>
+								<input id="billing_city" name="billing_city" type="text" class="validate">
+								<label for="billing_city">City</label>
 							</div>
 							<div class="input-field col s2">
-								<select class="validate" id="state" name="state">
+								<select class="validate" id="billing_state" name="billing_state">
 									<option value="" disabled selected>Select State</option>
 									<% states.forEach(function(st) { %>
 										<option value="<%= st.id %>"><%= st.state %></option>
 									<% }); %>
 								</select>
 							</div>
-							<div class="input-field col s1">
-								<input id="zipcode" name="zipcode" type="text" class="validate">
-								<label for="zipcode">Zip Code</label>
+							<div class="input-field col s2">
+								<input id="billing_zipcode" name="v" type="text" class="validate">
+								<label for="billing_zipcode">Zip Code</label>
+							</div>
+						</div>
+						<div class='sectionSpacer'></div>
+						<label style="font-size:1.5rem;color:#000000;">Shipping Information</label>
+						<div class="row" style='margin-top:20px;'>
+							<div class="input-field col s4">
+								<i class="material-icons prefix">account_circle</i>
+								<input id="shipping_firstname" name="shipping_firstname" type="text" class="validate">
+								<label for="shipping_firstname">First Name</label>
+							</div>
+							<div class="input-field col s4">
+								<input id="shipping_lastname" name="shipping_lastname" type="text" class="validate">
+								<label for="shipping_lastname">Last Name</label>
+							</div>
+						</div>
+						<div class="row" style='margin-top:20px;'>
+							<div class="input-field col s4">
+								<i class="material-icons prefix">location_on</i>
+								<input id="shipping_address" name="shipping_address" type="text" class="validate">
+								<label for="shipping_address">Address</label>
+							</div>
+							<div class="input-field col s2">
+								<input id="shipping_city" name="shipping_city" type="text" class="validate">
+								<label for="shipping_city">City</label>
+							</div>
+							<div class="input-field col s2">
+								<select class="validate" id="shipping_state" name="shipping_state">
+									<option value="" disabled selected>Select State</option>
+									<% states.forEach(function(st) { %>
+										<option value="<%= st.id %>"><%= st.state %></option>
+									<% }); %>
+								</select>
+							</div>
+							<div class="input-field col s2">
+								<input id="shipping_zipcode" name="shipping_zipcode" type="text" class="validate">
+								<label for="shipping_zipcode">Zip Code</label>
 							</div>
 						</div>
 						<div class='sectionSpacer'></div>
