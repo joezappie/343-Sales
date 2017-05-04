@@ -112,11 +112,7 @@ router.post('/recall', function(req, res, next) {
 });
 
 router.get('/shoppingCart', function(req, res) {
-	models.TaxRates.findAll().then(function(states) {
-		console.log("test");
-		console.log(states);
-		res.render('pages/shoppingCart', { states: states });
-	});
+		res.render('pages/shoppingCart');
 });
 
 router.get('/customerCheckout', function(req, res) {

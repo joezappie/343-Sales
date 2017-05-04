@@ -4,14 +4,8 @@
 	<title>Sales Homepage - Checkout</title>
 	<%- include header.ejs %>
 </head>
+<script src="assets/js/shoppingCart.js"></script>
 <script>
-	//Save default values do we don't get any undefined shennanigans
-	var shippingName = document.getElementById("shipping_name").value;
-	var shippingStreetAddress = document.getElementById("shipping_street_address").value;
-	var shippingCity = document.getElementById("shipping_city").value;
-	var shippingZipCode = document.getElementById("shipping_zip_code").value;
-	var shippingState = document.getElementById("shipping_state").value;
-
 	function useBillingInfo()
 	{
 		if (document.getElementById("shipping_is_billing").checked == true)
@@ -56,6 +50,15 @@
 <body>
 	<%- include consumer-navbar.ejs %>
 	<div class="bigContainer" >
+		<nav class="storeBreadcrumbs transparent">
+			<div class="nav-wrapper">
+				<div class="col s12">
+					<a href="/" class="breadcrumb">Browse Phones</a>
+					<a href="/shoppingCart" class="breadcrumb">Shopping Cart</a>
+					<a href="/customerCheckout" class="breadcrumb">Checkout</a>
+				</div>
+			</div>
+		</nav>
 		<div class="row">
 			<form class="col s12">
 				<div class="col s8">
@@ -82,8 +85,8 @@
 						</div>
 						<div class="input-field col s2">
 							<select id="expiration_date_month" name="expiration_date_month" class="browser-default">
-						    <option value="1">January</option>
-						    <option value="2">Febrary</option>
+								<option value="1">January</option>
+								<option value="2">Febrary</option>
 								<option value="3">March</option>
 								<option value="4">April</option>
 								<option value="5">May</option>
@@ -94,12 +97,12 @@
 								<option value="10">October</option>
 								<option value="11">November</option>
 								<option value="12">December</option>
-						  </select>
+							</select>
 						</div>
 						<div class="input-field col s2">
 							<select id="expiration_year" name="expiration_year" class="browser-default">
-						    <option value="2017">2017</option>
-						    <option value="2018">2018</option>
+								<option value="2017">2017</option>
+								<option value="2018">2018</option>
 								<option value="2019">2019</option>
 								<option value="2020">2020</option>
 								<option value="2021">2021</option>
@@ -109,7 +112,7 @@
 								<option value="2025">2025</option>
 								<option value="2026">2026</option>
 								<option value="2027">2027</option>
-						  </select>
+							</select>
 						</div>
 					</div>
 					<div class="row">
@@ -149,7 +152,7 @@
 					<div class="row">
 						<div class="input-field col s4">
 								<input type="checkbox" class="filled-in" id="shipping_is_billing" name="shipping_is_billing" onclick="useBillingInfo()"/>
-	      				<label for="shipping_is_billing">Use Billing Address</label>
+								<label for="shipping_is_billing">Use Billing Address</label>
 						</div>
 						<div class="input-field col s5 offset-s1">
 							<Label for="shipping_name">Name</Label>
@@ -192,16 +195,17 @@
 					</div>
 				</div>
 				<div class="col s4">
-					<div class="card-panel teal lighten-2">
-						Put Shopping cart info here?
-					</div>
-					<div class="card-panel teal lighten-2">
-						Here Too.
-					</div>
-					<div class="card-panel teal lighten-2">
-						This is one continuous block of space,
-						so it should work.
-					</div>
+					<table class="striped">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Quantity</th>
+								<th>Price</th>
+							</tr>
+						</thead>
+						<tbody class="cartTbody"/>
+					</table>
+				</div>
 			</form>
 			</div>
 		</div>
