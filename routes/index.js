@@ -102,6 +102,11 @@ router.get('/recall', function(req, res, next) {
 	res.render('pages/recallForm');
 });
 
+router.post('/ordertest', function(req, res, next) {
+  res.render('pages/newCustomer');
+  console.log(req.body);
+});
+
 router.post('/recall', function(req, res, next) {
 	var phoneModel = req.body.phoneModel;
 	request(INVENTORY_BASE_URL + 'recall/' + phoneModel, function (error, response, body) {
