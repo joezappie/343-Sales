@@ -11,10 +11,6 @@ function findTotal() {
 		};
 		document.getElementById('total').value = tot;
 };
-
-function getInfo(info) {
-
-};
 </script>
 
 <head>
@@ -25,7 +21,11 @@ function getInfo(info) {
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#post-btn").click(function() {
-		$.post("/ordertest", $("#post-form").serialize(), alert("done"));
+		var conceptName = $('#custs').find(":selected").text();
+		var cName = String(conceptName).split(",");
+		console.log(cName[0]);
+		$("#customerId").val(cName[0]);
+		$.post("/ordertest", $("#post-form").serialize(), alert("Order has been placed"));
 	});
 });
 </script>
@@ -41,10 +41,10 @@ $(document).ready(function() {
 						<h4>Place Business Order</h4>
 						<div class="row">
 							<div class="input-field col s6">
-							<select class="browser-default">
+							<select class="browser-default" id="custs">
 							<option value="" disabled selected>Select Business Customer</option>
 									<% customers.forEach(function(customer) { %>
-									<option><%= customer.lastName %>, <%=customer.firstName %></option>
+									<option><%= customer.id %>, <%= customer.lastName %>, <%=customer.firstName %></option>
 									<% }); %>
 							</select>
 							</div>
