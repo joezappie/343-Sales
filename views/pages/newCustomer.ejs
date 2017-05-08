@@ -33,6 +33,8 @@
 									element.siblings("label").attr("data-error", response.errors[input]);
 								};
 							}
+							
+							$(window).scrollTop(0);
 						}, "json");
 						
 						event.preventDefault();

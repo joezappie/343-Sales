@@ -30,13 +30,15 @@ $(document).ready(function() {
 				onCustomerSelected();
 			} else if(response.hasOwnProperty("errors")) {
 				var errors = $("#errors");
-				errors.html();
+				errors.html("");
 			
 				for(var index in response.errors) {
 					errors.append("<div>" + response.errors[index] + "</div>");
 				};
 				errors.show();
 			}
+			
+			$(window).scrollTop(0);
 			
 		}, "json");
 			

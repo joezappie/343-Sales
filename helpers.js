@@ -201,22 +201,24 @@ module.exports = {
 					});
 				};
 				
+				// Build the base response message
 				var response = {errors:{}, success: false};
 				
 				var totalCost = 0;
 				var totalQuantity = 0;
 				
+				// Calculate the total order price and check that all the phones selected are valid
 				if(info.hasOwnProperty("phone")) {
 					info.phone.forEach(function(val, index) {
 						if(typeof phoneModels[index] !== 'undefined') {
-							totalCost += phoneModels[index].price * val.quantity;
-							totalQuantity += val.quantity;
+							var quanity = parseInt(val.quantity);
+							totalCost += phoneModels[index].price * quanity;
+							totalQuantity += quanity;
 						} else {
 							response.errors.invalidPhone = "An invalid phone was selected.";
 						}
 					});
 				}
-				
 				
 				if(Object.keys(response.errors).length == 0) {
 					
@@ -227,7 +229,8 @@ module.exports = {
 						// Businesses have a min quanity requirement
 						if(totalQuantity < MIN_BUSINESS_QUANTITY) {
 							response.errors.lowQuanity = "Minimum phone quantity is " + MIN_BUSINESS_QUANTITY;
-						}
+							reject(response);
+						} 
 						
 						// Check that the customer exists
 						models.Customer.findOne({
@@ -319,8 +322,7 @@ module.exports = {
 									}).catch(function(err) {
 										response.errors.address = "Failed to place order";
 										reject(response);
-									});;
-									
+									});
 									
 								}).catch(function(err) {
 									response.errors.address = "Payment method is invalid";
@@ -331,11 +333,11 @@ module.exports = {
 								response.errors.address = "Shipping address is invalid";
 								reject(response);
 							});
-							
 						}).catch(function(err) {
-							response.errors.invaildCustomer = "Customer is invalid";
+							response.errors.invalidCustomer = "Customer is invalid";
 							reject(response);
 						});
+		
 					} else {
 						// Normal customer checkout
 					}	
