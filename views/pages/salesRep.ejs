@@ -29,7 +29,7 @@ function findTotal(){
 							<select class="browser-default">
 							<option value="" disabled selected>Select Business Customer</option>
 									<% customers.forEach(function(customer) { %>
-									<option><%= customer.lastName %>, <%=customer.firstName %></option>
+									<option><%= customer.company %></option>
 									<% }); %>
 							</select>
 							</div>

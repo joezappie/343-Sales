@@ -80,7 +80,9 @@ router.get('/salesRep', function(req, res) {
 
 		models.Customer.findAll({
 			where: {
-				isCompany: true,
+				company: {
+					$ne: null
+				}
 			}
 		}).then(function(customers) {
 			models.TaxRates.findAll().then(function(states) {
