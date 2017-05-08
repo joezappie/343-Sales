@@ -31,3 +31,8 @@
 .sectionSpacer {
 	height:20px;
 }
+
+/* Message Boxes */
+.msgbox_green { background-color:#d6efcd; border:1px solid #bdeaaf; color:#3f9b2f; border-radius:3px; padding:20px; }
+.msgbox_red { background-color:#fbe3e4; border:1px solid #fbc9ca; color:#b74f43; border-radius:3px; padding:20px;  }
+.msgbox_blue { background-color:#cde4ef; border:1px solid #afd5ea; color:#2f6a9b; border-radius:3px; padding:20px;  }

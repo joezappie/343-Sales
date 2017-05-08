@@ -32,7 +32,7 @@ router.get('/', function(req,res,next){
 	
 });
 
-router.post('/placeOrder', async function(req,res,next) {
+router.post('/placeOrder', function(req,res,next) {
 	var customerId;
 	var items = req.body.items;
 	
@@ -51,16 +51,11 @@ router.post('/placeOrder', async function(req,res,next) {
 	});
 });
 
-router.post('/placeBusinessOrder', async function(req,res,next) {
-	var customerId = req.body.customerId;
-	var items = req.body.items;
-	
-	helpers.createOrder(customerId, items).then(function(orderRes) {
-		if (!orderRes.success) {
-			res.status(400).json(orderRes.errors);
-		}
-		
-		res.json(orderRes.items);
+router.post('/placeBusinessOrder', function(req,res,next) {
+	helpers.createOrder(req.body, true).then(function(response) {
+		res.json(response);
+	}).catch(function(response) {
+		res.json(response);
 	});
 });
 

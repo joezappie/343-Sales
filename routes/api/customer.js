@@ -35,6 +35,37 @@ router.get('/', function(req, res, next) {
 	});
 });
 
+router.get('/getShipping', function(req, res, next) {
+	models.Address.findAll({
+		where: {
+			customerId: req.param('customer'),
+		},
+		include: [{ all: true }]
+	}).then(function(results) {
+		res.json(results);
+	}).catch(function(errors) {
+		res.json({failed: errors});
+	});
+});
+
+router.get('/getPayments', function(req, res, next) {
+	models.PaymentMethod.findAll({
+		include: [
+			{ 
+				model: models.Address,
+				as: "billingAddress",
+				where: {
+					customerId: req.param('customer')
+				}
+			}
+		]
+	}).then(function(results) {
+		res.json(results);
+	}).catch(function(errors) {
+		res.json({failed: errors});
+	});
+});
+
 router.post('/create', function(req, res, next) {
 	helpers.createCustomer(req.body).then(function(errors) {
 		res.json(errors);
