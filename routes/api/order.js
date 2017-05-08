@@ -35,7 +35,9 @@ router.get('/', function(req,res,next){
 router.post('/placeOrder', function(req,res,next) {
 	
 	helpers.createCustomer(req.body).then(function(customerResponse) {
-		
+		req.body.customer = customerResponse.customer.id;
+		req.body.payment = customerResponse.payment.id;
+		req.body.shipping = customerResponse.shipping.id;
 		helpers.createOrder(req.body, false).then(function(orderResponse) {
 			var response = Object.assign(customerResponse, orderResponse);
 			res.json(response);

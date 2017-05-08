@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Sales Homepage - Store</title>
+	<%- include header.ejs %>
+</head>
+<body>
+	<%- include consumer-navbar.ejs %>
+	<div class="container storeContainer">
+	
+		<nav class="storeBreadcrumbs transparent">
+			<div class="nav-wrapper">
+				<div class="col s12">
+					<a href="/" class="breadcrumb">Browse Phones</a>
+					<a href="/shoppingCart" class="breadcrumb">Shopping Cart</a>
+					<a href="/" class="breadcrumb">Order Placed</a>
+				</div>
+			</div>
+		</nav>
+		
+		<h1>Your order has been received!</h1>
+		<h6>Expected delivery date: Never</h6>
+		
+		<a href='/'>
+			<button class="btn waves-effect waves-light" style='margin-top:50px;'>
+				Back to Browse
+				<i class="material-icons right">store</i>
+			</button>
+		</a>
+	</div>
+	</div>
+</body>
+</html>

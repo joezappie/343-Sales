@@ -8,46 +8,19 @@
 <script>
 	function useBillingInfo()
 	{
-		if (document.getElementById("shipping_is_billing").checked == true)
-		{
-			//store values if we uncheck
-			shippingFirstName = document.getElementById("shipping_first_name").value;
-			shippingLastName = document.getElementById("shipping_last_name").value;
-			shippingStreetAddress = document.getElementById("shipping_street_address").value;
-			shippingCity = document.getElementById("shipping_city").value;
-			shippingZipCode = document.getElementById("shipping_zip_code").value;
-			shippingState = document.getElementById("shipping_state").value;
+		//set shipping to billing
+		document.getElementById("shipping_first_name").value = document.getElementById("billing_first_name").value;
+		document.getElementById("shipping_last_name").value = document.getElementById("billing_last_name").value;
+		document.getElementById("shipping_address").value = document.getElementById("billing_address").value;
+		document.getElementById("shipping_city").value = document.getElementById("billing_city").value;
+		document.getElementById("shipping_zip_code").value = document.getElementById("billing_zip_code").value;
+		document.getElementById("shipping_state").value = document.getElementById("billing_state").value;
 
-			//set shipping to billing
-			document.getElementById("shipping_first_name").value = document.getElementById("billing_first_name").value;
-			document.getElementById("shipping_last_name").value = document.getElementById("billing_last_name").value;
-			document.getElementById("shipping_street_address").value = document.getElementById("billing_street_address").value;
-			document.getElementById("shipping_city").value = document.getElementById("billing_city").value;
-			document.getElementById("shipping_zip_code").value = document.getElementById("billing_zip_code").value;
-			document.getElementById("shipping_state").value = document.getElementById("billing_state").value;
+		//update dropdown menu with new value
+		$('select').material_select();
 
-			//update dropdown menu with new value
-			$('select').material_select();
-
-			//redraw labels so they don't overlap with text
-			Materialize.updateTextFields()
-		}
-		else
-		{
-			//restore stored values
-			document.getElementById("shipping_first_name").value = shippingFirstName;
-			document.getElementById("shipping_last_name").value = shippingLastName;
-			document.getElementById("shipping_street_address").value = shippingStreetAddress;
-			document.getElementById("shipping_city").value = shippingCity;
-			document.getElementById("shipping_zip_code").value = shippingZipCode;
-			document.getElementById("shipping_state").value = shippingState;
-
-			//update dropdown menu with new value
-			$('select').material_select();
-
-			//redraw labels so they don't overlap with text
-			Materialize.updateTextFields()
-		}
+		//redraw labels so they don't overlap with text
+		Materialize.updateTextFields()
 	}
 	
 	$(document).ready(function() {
@@ -59,9 +32,8 @@
 			$.post("api/order/placeOrder", $("#placeOrderForm").serialize(), function( response ) {
 				console.log(response);
 				if(response.hasOwnProperty("success") && response.success) {
-					Materialize.toast('New Order Placed', 4000);
-					$("#post-form").trigger("reset");
-					onCustomerSelected();
+					window.location = "/checkoutComplete";
+					localStorage.clear();
 				} else if(response.hasOwnProperty("errors")) {
 					for(var input in response.errors) {
 						var element = $("#" + input);
@@ -75,7 +47,7 @@
 					};
 				}
 				
-				$(window).scrollTop(0);
+				$("html, body").animate({ scrollTop: "0px" });
 				
 			}, "json");
 			
@@ -99,27 +71,38 @@
 		<div class="row">
 			<form id='placeOrderForm' class="col s12">
 				<div class="col s8">
+					<div class='sectionSpacer'></div>
+					<label style="font-size:1.5rem;color:#000000;">Customer Information</label>
 					<div class="row">
-						<h5>Credit Card Information:</h5>
-					</div>
-					<div class="row">
-						<div class="input-field col s5">
-							<label for="card_number" >Credit Card Number</label>
-							<input id="card_number" name="card_number" type="text" class="validate"/>
-						</div>
-						<div class="input-field col s2">
-							<Label for="billing_first_name">First Name</Label>
-							<input id="billing_first_name" name="billing_first_name" type="text" class="validate"/>
+						<div class="input-field col s4">
+							<input id="email" name="email" type="text" class="validate">
+							<label for="email">Email Address</label>
 						</div>
 						<div class="input-field col s3">
-							<Label for="billing_last_name">Last Name</Label>
+							<input id="phone" name="phone" type="text" class="validate">
+							<label for="phone">Phone Number</label>
+						</div>
+					</div>
+					<div class='sectionSpacer'></div>
+					<label style="font-size:1.5rem;color:#000000;">Credit Card Information</label>
+					<div class="row">
+						<div class="input-field col s5">
+							<input id="card_number" name="card_number" type="text" class="validate"/>
+							<label for="card_number" >Credit Card Number</label>
+						</div>
+						<div class="input-field col s2">
+							<input id="billing_first_name" name="billing_first_name" type="text" class="validate"/>
+							<label for="billing_first_name">First Name</label>
+						</div>
+						<div class="input-field col s3">
+							<label for="billing_last_name">Last Name</label>
 							<input id="billing_last_name" name="billing_last_name" type="text" class="validate"/>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s2">
+							<input id="cvc" name="cvc" type="text" class="validate"/>
 							<label for="cvc">Security Code</label>
-							<input id="cvc" name="cvc" type="text" style="text-align:center;" class="validate"/>
 						</div>
 						<div class="input-field col s2 offset-s1" style="text-align:right;">
 							<label>Expiration:</label>
@@ -150,23 +133,22 @@
 							</select>
 						</div>
 					</div>
-					<div class="row">
-						<h5>Billing Address:</h5>
-					</div>
+					<div class='sectionSpacer'></div>
+					<label style="font-size:1.5rem;color:#000000;">Billing Address</label>
 					<div class="row">
 						<div class="input-field col s5">
-							<Label for="billing_address">Street Address</Label>
 							<input id="billing_address" name="billing_address" type="text" class="validate"/>
+							<label for="billing_address">Street Address</label>
 						</div>
 						<div class="input-field col s5">
-							<Label for="billing_city">City</Label>
 							<input id="billing_city" name="billing_city" type="text" class="validate"/>
+							<label for="billing_city">City</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s3">
-							<Label for="billing_zip_code">Zip Code</Label>
 							<input id="billing_zip_code" name="billing_zip_code" type="text" class="validate"/>
+							<label for="billing_zip_code">Zip Code</label>
 						</div>
 						<div class="input-field col s2 offset-s1">
 							<label>State:</label>
@@ -181,43 +163,43 @@
 							</select>
 						</div>
 					</div>
+					<div class='sectionSpacer'></div>
+					<label style="font-size:1.5rem;color:#000000;">Shipping Address</label>
 					<div class="row">
-						<h5>Shipping Address:</h5>
-					</div>
-					<div class="row">
-						<div class="input-field col s4">
-								<input type="checkbox" class="filled-in" id="shipping_is_billing" name="shipping_is_billing" onclick="useBillingInfo()"/>
-								<label for="shipping_is_billing">Use Billing Address</label>
-						</div>
-						<div class="input-field col s2 offset-s1">
-							<Label for="shipping_first_name">First Name</Label>
-							<input id="shipping_first_name" name=="shipping_first_name" type="text" class="validate"/>
-						</div>
-						<div class="input-field col s3">
-							<Label for="shipping_last_name">Last Name</Label>
-							<input id="shipping_last_name" name=="shipping_last_name" type="text" class="validate"/>
+						<div class="input-field col s4" onclick="useBillingInfo()" style='cursor:pointer;'>
+							<i class="material-icons left">replay</i>
+							<div class='left pink-text lighten-2'>Copy From Billing</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s5">
-							<Label for="shipping_address">Street Address</Label>
+							<input id="shipping_first_name" name="shipping_first_name" type="text" class="validate"/>
+							<label for="shipping_first_name">First Name</label>
+						</div>
+						<div class="input-field col s5">
+							<input id="shipping_last_name" name="shipping_last_name" type="text" class="validate"/>
+							<label for="shipping_last_name">Last Name</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s5">
 							<input id="shipping_address" name="shipping_address" type="text" class="validate"/>
+							<label for="shipping_address">Street Address</label>
 						</div>
 						<div class="input-field col s5">
-							<Label for="shipping_city">City</Label>
 							<input id="shipping_city" name="shipping_city" type="text" class="validate"/>
+							<label for="shipping_city">City</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s3">
-							<Label for="shipping_zip_code">Zip Code</Label>
 							<input id="shipping_zip_code" name="shipping_zip_code" type="text" class="validate"/>
+							<label for="shipping_zip_code">Zip Code</label>
 						</div>
 						<div class="input-field col s2 offset-s1">
 							<label>State:</label>
 						</div>
 						<div class="input-field col s4">
-							<!--I couldn't get this to work.-->
 							<select id='shipping_state' name='shipping_state'>
 								<option value="" disabled selected>Select State/Territory</option>
 								<% states.forEach(function(st) { %>
