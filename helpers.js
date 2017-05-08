@@ -276,59 +276,80 @@ module.exports = {
 									},
 								]
 							}).then(function(billingResults) {
+								
 								// Check that we got a result back
 								if(billingResults.length == 0) {
 									throw 'Invalid';
 								}
-			
-								// Everything checks out so place order
-								var orderInfo = {
-									totalItemCost: totalCost,
-									shippingCost: 0,
-									orderDate: new Date(),
-									isPaid: true,
-									taxPercentage: billingResults.billingAddress.state.rate,
-									customerId: customer.id,
-									shippingAddressId: shippingResults.id,
-									paymentMethodId: billingResults.id,
+								
+								// Default to free shipping
+								if(!info.hasOwnProperty("shippingOptions")) {
+									info.shippingOptions = 1;
 								}
 								
-								models.Orders.create(orderInfo).then(function(orderResult) {
-								
-									var orderItems = [];
+								// Validate shipping price
+								models.ShippingCosts.findOne({
+									where: {
+										id: parseInt(info.shippingOptions),
+									}
+								}).then(function(shippingOptions) {
 									
-									// Create the actual items
-									info.phone_model.forEach(function(val, index) {
-										// Create order item for each phone
-										for(var x = 0; x < val.quantity; x++) {
-											// TODO: get a new serial number
-											// TODO: Calculate refund/replace deadlines
-											orderItems.push({
-												serialNumber: 1,
-												modelId: index,
-												price: phoneModels[index].price - (phoneModels[index].price * BUSINESS_DISCOUNT),
-												isPaid: true,
-												replacementDeadline: new Date(),
-												refundDeadline: new Date(),
-												orderId: orderResult.id
-											});
-										}
-									});
+									// Check that we got a result back
+									if(shippingOptions.length == 0) {
+										throw 'Invalid';
+									}
+				
+									// Everything checks out so place order
+									var orderInfo = {
+										totalItemCost: totalCost,
+										shippingCost: shippingOptions.price,
+										orderDate: new Date(),
+										isPaid: true,
+										taxPercentage: billingResults.billingAddress.state.rate,
+										customerId: customer.id,
+										shippingAddressId: shippingResults.id,
+										paymentMethodId: billingResults.id,
+									}
 									
-									// Run query to create items
-									models.Item.bulkCreate(orderItems).then(function() {
-										response.success = true;
-										response.order = orderResult;
-										response.customer = customer;
-										response.items = orderItems.length;
-										resolve(response);
+									models.Orders.create(orderInfo).then(function(orderResult) {
+									
+										var orderItems = [];
+										
+										// Create the actual items
+										info.phone_model.forEach(function(val, index) {
+											// Create order item for each phone
+											for(var x = 0; x < val.quantity; x++) {
+												// TODO: get a new serial number
+												// TODO: Calculate refund/replace deadlines
+												orderItems.push({
+													serialNumber: 1,
+													modelId: index,
+													price: phoneModels[index].price - (phoneModels[index].price * BUSINESS_DISCOUNT),
+													isPaid: true,
+													replacementDeadline: new Date(),
+													refundDeadline: new Date(),
+													orderId: orderResult.id
+												});
+											}
+										});
+										
+										// Run query to create items
+										models.Item.bulkCreate(orderItems).then(function() {
+											response.success = true;
+											response.order = orderResult;
+											response.customer = customer;
+											response.items = orderItems.length;
+											resolve(response);
+										}).catch(function(err) {
+											response.errors.address = "Couldn't place order";
+											reject(response);
+										});
 									}).catch(function(err) {
-										response.errors.address = "Couldn't place order";
+										response.errors.address = "Failed to place order";
 										reject(response);
 									});
-									
 								}).catch(function(err) {
-									response.errors.address = "Failed to place order";
+									response.errors.shippingOptions = "Invalid shipping option";
 									reject(response);
 								});
 								

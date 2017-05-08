@@ -24,6 +24,17 @@
 	}
 	
 	$(document).ready(function() {
+		
+		// Load shipping options
+		var shippingOptions = $("#shippingOptions");
+		$.get("api/shippingOptions", function( response ) {
+			$(response).each(function(index) {
+				shippingOptions.append("<option value='" + response[index].id + "'>$" + parseFloat(response[index].price).toFixed(2) + " - " +response[index].name + "</option>");
+			});
+			
+			shippingOptions.material_select();
+		}, "json");
+		
 		$('select').material_select();
 		
 		$( "#placeOrderForm" ).submit(function( event ) {
@@ -226,6 +237,13 @@
 						</thead>
 						<tbody class="cartTbody"/>
 					</table>
+					
+					<h5 style='margin:30px 0px 0px 0px;'>Shipping Method</h5>
+					<div class="row">
+						<div class="input-field col s12">
+							<select id="shippingOptions" name='shippingOptions'></select>
+						</div>
+					</div>
 				</div>
 			</form>
 			</div>

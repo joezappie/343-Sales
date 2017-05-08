@@ -1,6 +1,8 @@
+var models = require(__base + 'models.js');
 var express = require('express');
-var router = express.Router();
+var Sequelize = require('sequelize');
 var helpers = require(__base + 'helpers.js');
+var router = express.Router();
 
 // Route requires
 router.use('/customer', require('./customer'));
@@ -17,5 +19,14 @@ router.get('/', function(req, res, next) {
 	};
 	res.json(message);
 });
+
+router.get('/shippingOptions', function(req, res, next) {
+	models.ShippingCosts.findAll({}).then(function(result) {
+		res.json(result);
+	}).catch(function(err) {
+		res.json(err);
+	});
+});
+
 
 module.exports = router;
