@@ -37,9 +37,15 @@ var loadCart = function(cart) {
 		var tdPrice = document.createElement('td');
 		tdPrice.textContent = '$' + phone.price * phone.quantity;
 
+		var inputQuantity = document.createElement("input");
+		inputQuantity.setAttribute("type", "hidden");
+		inputQuantity.setAttribute("name", "quantity_" + phone.id);
+		inputQuantity.setAttribute("value", phone.quantity);
+
 		trow.appendChild(tdName);
 		trow.appendChild(tdQty);
 		trow.appendChild(tdPrice);
+		trow.appendChild(inputQuantity);
 
 		tbody.appendChild(trow);
 	});
@@ -49,7 +55,7 @@ var loadCart = function(cart) {
 	var tdQty = document.createElement('td');
 	var tdPrice = document.createElement('td');
 
-	tdName.textContent = 'Total';
+	tdName.textContent = 'Sub-Total';
 	tdPrice.textContent = '$' + total;
 
 	trow.appendChild(tdName);
@@ -57,4 +63,38 @@ var loadCart = function(cart) {
 	trow.appendChild(tdPrice);
 
 	tbody.appendChild(trow);
+
+	if (document.getElementById('billing_state'))
+	{
+		var tax = 1.06;
+		total *= tax;
+
+		var trow = document.createElement('tr');
+		var tdName = document.createElement('td');
+		var tdQty = document.createElement('td');
+		var tdPrice = document.createElement('td');
+
+		tdName.textContent = 'Tax';
+		tdPrice.textContent = "6%";
+
+		trow.appendChild(tdName);
+		trow.appendChild(tdQty);
+		trow.appendChild(tdPrice);
+
+		tbody.appendChild(trow);
+
+		var trow = document.createElement('tr');
+		var tdName = document.createElement('td');
+		var tdQty = document.createElement('td');
+		var tdPrice = document.createElement('td');
+
+		tdName.textContent = 'Total';
+		tdPrice.textContent = '$' + total;
+
+		trow.appendChild(tdName);
+		trow.appendChild(tdQty);
+		trow.appendChild(tdPrice);
+
+		tbody.appendChild(trow);
+	}
 };

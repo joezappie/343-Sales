@@ -11,14 +11,16 @@
 		if (document.getElementById("shipping_is_billing").checked == true)
 		{
 			//store values if we uncheck
-			shippingName = document.getElementById("shipping_name").value;
+			shippingFirstName = document.getElementById("shipping_first_name").value;
+			shippingLastName = document.getElementById("shipping_last_name").value;
 			shippingStreetAddress = document.getElementById("shipping_street_address").value;
 			shippingCity = document.getElementById("shipping_city").value;
 			shippingZipCode = document.getElementById("shipping_zip_code").value;
 			shippingState = document.getElementById("shipping_state").value;
 
 			//set shipping to billing
-			document.getElementById("shipping_name").value = document.getElementById("cardholder_name").value;
+			document.getElementById("shipping_first_name").value = document.getElementById("cardholder_first_name").value;
+			document.getElementById("shipping_last_name").value = document.getElementById("cardholder_last_name").value;
 			document.getElementById("shipping_street_address").value = document.getElementById("billing_street_address").value;
 			document.getElementById("shipping_city").value = document.getElementById("billing_city").value;
 			document.getElementById("shipping_zip_code").value = document.getElementById("billing_zip_code").value;
@@ -33,7 +35,8 @@
 		else
 		{
 			//restore stored values
-			document.getElementById("shipping_name").value = shippingName;
+			document.getElementById("shipping_first_name").value = shippingFirstName;
+			document.getElementById("shipping_last_name").value = shippingLastName;
 			document.getElementById("shipping_street_address").value = shippingStreetAddress;
 			document.getElementById("shipping_city").value = shippingCity;
 			document.getElementById("shipping_zip_code").value = shippingZipCode;
@@ -70,9 +73,13 @@
 							<label for="credit_card_num" >Credit Card Number</label>
 							<input id="credit_card_num" name="credit_card_num" type="text" class="validate"/>
 						</div>
-						<div class="input-field col s5">
-							<Label for="cardholder_name">Cardholder Name</Label>
-							<input id="cardholder_name" name="cardholder_name" type="text" class="validate"/>
+						<div class="input-field col s2">
+							<Label for="cardholder_first_name">First Name</Label>
+							<input id="cardholder_first_name" name="cardholder_first_name" type="text" class="validate"/>
+						</div>
+						<div class="input-field col s3">
+							<Label for="cardholder_last_name">Last Name</Label>
+							<input id="cardholder_last_name" name="cardholder_last_name" type="text" class="validate"/>
 						</div>
 					</div>
 					<div class="row">
@@ -154,9 +161,13 @@
 								<input type="checkbox" class="filled-in" id="shipping_is_billing" name="shipping_is_billing" onclick="useBillingInfo()"/>
 								<label for="shipping_is_billing">Use Billing Address</label>
 						</div>
-						<div class="input-field col s5 offset-s1">
-							<Label for="shipping_name">Name</Label>
-							<input id="shipping_name" name=="shipping_name" type="text" class="validate"/>
+						<div class="input-field col s2 offset-s1">
+							<Label for="shipping_first_name">First Name</Label>
+							<input id="shipping_first_name" name=="shipping_first_name" type="text" class="validate"/>
+						</div>
+						<div class="input-field col s3">
+							<Label for="shipping_last_name">Last Name</Label>
+							<input id="shipping_last_name" name=="shipping_last_name" type="text" class="validate"/>
 						</div>
 					</div>
 					<div class="row">
