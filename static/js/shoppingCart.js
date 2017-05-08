@@ -39,7 +39,7 @@ var loadCart = function(cart) {
 
 		var inputQuantity = document.createElement("input");
 		inputQuantity.setAttribute("type", "hidden");
-		inputQuantity.setAttribute("name", "quantity_" + phone.id);
+		inputQuantity.setAttribute("name", "phone[" + phone.id + "][quantity]");
 		inputQuantity.setAttribute("value", phone.quantity);
 
 		trow.appendChild(tdName);

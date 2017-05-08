@@ -33,21 +33,19 @@ router.get('/', function(req,res,next){
 });
 
 router.post('/placeOrder', function(req,res,next) {
-	var customerId;
-	var items = req.body.items;
 	
-	helpers.createCustomer(req.body).then(function(customerRes) {
-		if (!customerRes.success) {
-			res.status(400).json(customerInfo.errors);
-		}
-
-		helpers.createOrder(customerId, items).then(function(orderRes) {
-			if (!orderRes.success) {
-				res.status(400).json(orderRes.errors);
-			}
-			
-			res.json(orderRes.items);
+	helpers.createCustomer(req.body).then(function(customerResponse) {
+		
+		helpers.createOrder(req.body, false).then(function(orderResponse) {
+			var response = Object.assign(customerResponse, orderResponse);
+			res.json(response);
+		}).catch(function(orderResponse) {
+			var response = Object.assign(customerResponse, orderResponse);
+			res.json(response);
 		});
+		
+	}).catch(function(response) {
+		res.json(response);
 	});
 });
 

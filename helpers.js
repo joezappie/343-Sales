@@ -17,16 +17,16 @@ module.exports = {
 				var response = {errors:{}, success: false};
 				
 				function validateAddress(prefix) {
-					if(!info.hasOwnProperty(prefix + "_firstname") || info[prefix + "_firstname"].length < 2) {
-						response.errors[prefix + "_firstname"] = 'To short';
-					} else if(info[prefix + "_firstname"].length > 50) {
-						response.errors[prefix + "_firstname"] = 'To long';
+					if(!info.hasOwnProperty(prefix + "_first_name") || info[prefix + "_first_name"].length < 2) {
+						response.errors[prefix + "_first_name"] = 'To short';
+					} else if(info[prefix + "_first_name"].length > 50) {
+						response.errors[prefix + "_first_name"] = 'To long';
 					}
 							
-					if(!info.hasOwnProperty(prefix + "_lastname") || info[prefix + "_lastname"].length < 2) {
-						response.errors[prefix + "_lastname"] = 'To short';
-					} else if(info[prefix + "_lastname"].length > 50) {
-						response.errors[prefix + "_lastname"] = 'To long';
+					if(!info.hasOwnProperty(prefix + "_last_name") || info[prefix + "_last_name"].length < 2) {
+						response.errors[prefix + "_last_name"] = 'To short';
+					} else if(info[prefix + "_last_name"].length > 50) {
+						response.errors[prefix + "_last_name"] = 'To long';
 					}
 					
 					if(!info.hasOwnProperty(prefix + "_address") || info[prefix + "_address"] < 3) {
@@ -38,8 +38,8 @@ module.exports = {
 					}
 
 					var zipPattern = new RegExp(/(^\d{5}$)|(^\d{5}-\d{4}$)/);
-					if(!info.hasOwnProperty(prefix + "_zipcode") || !zipPattern.test(info[prefix + "_zipcode"])) {
-						response.errors[prefix + "_zipcode"] = 'Invalid zipcode';
+					if(!info.hasOwnProperty(prefix + "_zip_code") || !zipPattern.test(info[prefix + "_zip_code"])) {
+						response.errors[prefix + "_zip_code"] = 'Invalid zipcode';
 					}
 
 					if(!info.hasOwnProperty(prefix + "_state")) {

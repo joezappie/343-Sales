@@ -47,7 +47,7 @@
 				<div class="row">
 					<form id='createCustomer' class="col s12" method="POST" action="">
 						<input type='hidden' id='isCompany' name='isCompany' value='1' />
-						<label style="font-size:1.5rem;color:#000000;">Customer Information</label>
+						<label style="font-size:1.5rem;color:#000000;">Company Information</label>
 						<div class="row">
 							<div class="input-field col s3">
 								<i class="material-icons prefix">business</i>
@@ -101,7 +101,7 @@
 									<% for(var i=new Date().getFullYear(); i< new Date().getFullYear() + 15; i++) {%>
 									   <option value="<%= i %>"><%= i %></option>
 									<% } %>
-							  </select>
+								</select>
 							</div>
 						</div>
 						<div class='sectionSpacer'></div>
@@ -109,12 +109,12 @@
 						<div class="row" style='margin-top:20px;'>
 							<div class="input-field col s4">
 								<i class="material-icons prefix">account_circle</i>
-								<input id="billing_firstname" name="billing_firstname" type="text" class="validate">
-								<label for="billing_firstname">First Name</label>
+								<input id="billing_first_name" name="billing_first_name" type="text" class="validate">
+								<label for="billing_first_name">First Name</label>
 							</div>
 							<div class="input-field col s4">
-								<input id="billing_lastname" name="billing_lastname" type="text" class="validate">
-								<label for="billing_lastname">Last Name</label>
+								<input id="billing_last_name" name="billing_last_name" type="text" class="validate">
+								<label for="billing_last_name">Last Name</label>
 							</div>
 						</div>
 						<div class="row" style='margin-top:20px;'>
@@ -136,8 +136,8 @@
 								</select>
 							</div>
 							<div class="input-field col s2">
-								<input id="billing_zipcode" name="billing_zipcode" type="text" class="validate">
-								<label for="billing_zipcode">Zip Code</label>
+								<input id="billing_zip_code" name="billing_zip_code" type="text" class="validate">
+								<label for="billing_zip_code">Zip Code</label>
 							</div>
 						</div>
 						<div class='sectionSpacer'></div>
@@ -145,12 +145,12 @@
 						<div class="row" style='margin-top:20px;'>
 							<div class="input-field col s4">
 								<i class="material-icons prefix">account_circle</i>
-								<input id="shipping_firstname" name="shipping_firstname" type="text" class="validate">
-								<label for="shipping_firstname">First Name</label>
+								<input id="shipping_first_name" name="shipping_first_name" type="text" class="validate">
+								<label for="shipping_first_name">First Name</label>
 							</div>
 							<div class="input-field col s4">
-								<input id="shipping_lastname" name="shipping_lastname" type="text" class="validate">
-								<label for="shipping_lastname">Last Name</label>
+								<input id="shipping_last_name" name="shipping_last_name" type="text" class="validate">
+								<label for="shipping_last_name">Last Name</label>
 							</div>
 						</div>
 						<div class="row" style='margin-top:20px;'>
@@ -172,8 +172,8 @@
 								</select>
 							</div>
 							<div class="input-field col s2">
-								<input id="shipping_zipcode" name="shipping_zipcode" type="text" class="validate">
-								<label for="shipping_zipcode">Zip Code</label>
+								<input id="shipping_zip_code" name="shipping_zip_code" type="text" class="validate">
+								<label for="shipping_zip_code">Zip Code</label>
 							</div>
 						</div>
 						<div class='sectionSpacer'></div>
