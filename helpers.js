@@ -1,6 +1,9 @@
 var models = require(__base + 'models.js');
 var validator = require('validator');
 var nodemailer = require('nodemailer');
+var request = require('request');
+
+var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/inventory/";
 
 module.exports = {
 
@@ -174,6 +177,170 @@ module.exports = {
 						reject(response);
 					});
 				
+				} else {
+					reject(response);
+				}
+			});
+		});
+	},
+	
+	createOrder: function(info, business) {
+		var self = this;
+		
+		return new Promise(function(resolve, reject) {
+			// Load the phones
+			request(INVENTORY_BASE_URL + 'models/all', function (error, response, body) {
+				
+				var phoneModels = [];
+				
+				// Check if the request was successful
+				if (!error && response.statusCode === 200) {
+					phoneModels = JSON.parse(body).map(function(model) {
+						return model;
+					});
+				};
+				
+				var response = {errors:{}, success: false};
+				
+				var totalCost = 0;
+				var totalQuantity = 0;
+				var minQuantity = 1;
+				
+				if(info.hasOwnProperty("phone")) {
+					info.phone.forEach(function(val, index) {
+						if(typeof phoneModels[index] !== 'undefined') {
+							totalCost += phoneModels[index].price * val.quantity;
+							totalQuantity += val.quantity;
+						} else {
+							response.errors.invalidPhone = "An invalid phone was selected.";
+						}
+					});
+				}
+				
+				if(totalQuantity < minQuantity) {
+					response.errors.lowQuanity = "Minimum quantity is " + minQuantity;
+				}
+				
+				if(Object.keys(response.errors).length == 0) {
+					
+					if(business) {
+
+						// Business customer checkout
+						
+						var customerId = parseInt(info.customer);
+						
+						var customerQuery = {
+							where: {
+								id: customerId,
+							}
+						}
+						
+						models.Customer.findOne(customerQuery).then(function(customer) {
+							
+							// Validate shipping address
+							models.Address.findOne({
+								where: {
+									customerId: customer.id,
+									id: parseInt(info.shipping)
+								}
+							}).then(function(shippingResults) {
+								// Check that we got a result back
+								if(shippingResults.length == 0) {
+									throw 'Invalid';
+								}
+								
+								// Validate payment method
+								models.PaymentMethod.findOne({
+									where: {
+										id: parseInt(info.payment),
+									},
+									include: [
+										{ 
+											model: models.Address,
+											as: "billingAddress",
+											where: {
+												customerId: customer.id,
+											}
+										}
+									]
+								}).then(function(billingResults) {
+									// Check that we got a result back
+									if(billingResults.length == 0) {
+										throw 'Invalid';
+									}
+									
+									// Everything checks out so place order
+									var orderInfo = {
+										totalItemCost: totalCost,
+										shippingCost: 0,
+										orderDate: new Date(),
+										isPaid: true,
+										taxPercentage: .06,
+										customerId: customer.id,
+										shippingAddressId: shippingResults.id,
+										paymentMethodId: billingResults.id,
+									}
+									
+									models.Orders.create(orderInfo).then(function(orderResult) {
+									
+										var promises = [];
+										
+										// Create the actual items
+										info.phone.forEach(function(val, index) {
+											// Create order item for each phone
+											for(var x = 0; x < val.quantity; x++) {
+	
+												// TODO: get a new serial number
+												// TODO: Calculate refund/replace deadlines
+												var data = {
+													serialNumber: 1,
+													modelId: index,
+													price: phoneModels[index].price,
+													isPaid: true,
+													replacementDeadline: new Date(),
+													refundDeadline: new Date(),
+													orderId: orderResult.id
+												}
+												
+												promises.push(models.Item.create(data));
+											}
+											
+											Promise.all(promises).then(function() {
+												response.success = true;
+												response.order = orderResult;
+												response.customer = customer;
+												resolve(response);
+											}).catch(function(err) {
+												response.errors.address = "Couldn't place order";
+												response.err = err;
+												reject(response);
+											});
+						
+										});
+										
+									}).catch(function(err) {
+										response.errors.address = "Failed to place order";
+										reject(response);
+									});;
+									
+									
+								}).catch(function(err) {
+									response.errors.address = "Payment method is invalid";
+									reject(response);
+								});
+								
+							}).catch(function(err) {
+								response.errors.address = "Shipping address is invalid";
+								reject(response);
+							});
+							
+						}).catch(function(err) {
+							response.errors.invaildCustomer = "Customer is invalid";
+							reject(response);
+						});
+					} else {
+						// Normal customer checkout
+					}	
 				} else {
 					reject(response);
 				}
