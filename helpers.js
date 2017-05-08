@@ -4,6 +4,7 @@ var nodemailer = require('nodemailer');
 var request = require('request');
 
 var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/inventory/";
+var MIN_BUSINESS_QUANTITY = 100;
 
 module.exports = {
 
@@ -204,7 +205,6 @@ module.exports = {
 				
 				var totalCost = 0;
 				var totalQuantity = 0;
-				var minQuantity = 1;
 				
 				if(info.hasOwnProperty("phone")) {
 					info.phone.forEach(function(val, index) {
@@ -217,25 +217,24 @@ module.exports = {
 					});
 				}
 				
-				if(totalQuantity < minQuantity) {
-					response.errors.lowQuanity = "Minimum quantity is " + minQuantity;
-				}
 				
 				if(Object.keys(response.errors).length == 0) {
 					
 					if(business) {
-
 						// Business customer checkout
-						
 						var customerId = parseInt(info.customer);
 						
-						var customerQuery = {
+						// Businesses have a min quanity requirement
+						if(totalQuantity < MIN_BUSINESS_QUANTITY) {
+							response.errors.lowQuanity = "Minimum phone quantity is " + MIN_BUSINESS_QUANTITY;
+						}
+						
+						// Check that the customer exists
+						models.Customer.findOne({
 							where: {
 								id: customerId,
 							}
-						}
-						
-						models.Customer.findOne(customerQuery).then(function(customer) {
+						}).then(function(customer) {
 							
 							// Validate shipping address
 							models.Address.findOne({
@@ -283,16 +282,15 @@ module.exports = {
 									
 									models.Orders.create(orderInfo).then(function(orderResult) {
 									
-										var promises = [];
+										var orderItems = [];
 										
 										// Create the actual items
 										info.phone.forEach(function(val, index) {
 											// Create order item for each phone
 											for(var x = 0; x < val.quantity; x++) {
-	
 												// TODO: get a new serial number
 												// TODO: Calculate refund/replace deadlines
-												var data = {
+												orderItems.push({
 													serialNumber: 1,
 													modelId: index,
 													price: phoneModels[index].price,
@@ -300,22 +298,22 @@ module.exports = {
 													replacementDeadline: new Date(),
 													refundDeadline: new Date(),
 													orderId: orderResult.id
-												}
-												
-												promises.push(models.Item.create(data));
+												});
 											}
-											
-											Promise.all(promises).then(function() {
-												response.success = true;
-												response.order = orderResult;
-												response.customer = customer;
-												resolve(response);
-											}).catch(function(err) {
-												response.errors.address = "Couldn't place order";
-												response.err = err;
-												reject(response);
-											});
 						
+										});
+										
+										// Run query to create items
+										models.Item.bulkCreate(orderItems).then(function() {
+											response.success = true;
+											response.order = orderResult;
+											response.customer = customer;
+											response.items = orderItems.length;
+											resolve(response);
+										}).catch(function(err) {
+											response.errors.address = "Couldn't place order";
+											response.err = err;
+											reject(response);
 										});
 										
 									}).catch(function(err) {

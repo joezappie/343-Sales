@@ -21,25 +21,47 @@ function findTotal() {
 <script type="text/javascript">
 $(document).ready(function() {
 	$("#post-btn").click(function() {
+		$("#errors").hide();
 		$.post("api/order/placeBusinessOrder", $("#post-form").serialize(), function( response ) {
 			console.log(response);
-
+			if(response.hasOwnProperty("success") && response.success) {
+				Materialize.toast('New Order Placed', 4000);
+				$("#post-form").trigger("reset");
+				onCustomerSelected();
+			} else if(response.hasOwnProperty("errors")) {
+				var errors = $("#errors");
+				errors.html();
+			
+				for(var index in response.errors) {
+					errors.append("<div>" + response.errors[index] + "</div>");
+				};
+				errors.show();
+			}
+			
 		}, "json");
 			
 		event.preventDefault();
 	});
 	
-	$("#custs").on("change", function() {
-		
-		var customerId = parseInt($(this).val());
-		
+	$("#custs").on("change", onCustomerSelected);
+});
+
+function onCustomerSelected() {
+	var customerId = parseInt($("#custs").val());
+	
+	if(isNaN(customerId)) {
+		$("#businessInfo").hide();
+	} else {
 		$("#businessInfo").show();
+		
+		var shippingOptions = $("#shippingOptions");
+		shippingOptions.html("");
+		
+		var paymentOptions = $("#paymentOptions");
+		paymentOptions.html("");
 		
 		// Load their shipping address
 		$.get("api/customer/getShipping?customer=" + customerId, function( response ) {
-			var shippingOptions = $("#shippingOptions");
-			shippingOptions.html("");
-			
 			$(response).each(function(index) {
 				var address = response[index];
 				shippingOptions.append("<option value='" + response[index].id + "'>" + address.firstName + " " + address.lastName + " | " + address.address + " " + address.city + ", " + address.state.state + ", " + address.zip + "</option>");
@@ -48,14 +70,12 @@ $(document).ready(function() {
 		
 		// Load their billing options
 		$.get("api/customer/getPayments?customer=" + customerId, function( response ) {
-			var paymentOptions = $("#paymentOptions");
-			paymentOptions.html("");
 			$(response).each(function(index) {
 				paymentOptions.append("<option value='" + response[index].id + "'>Card ending in " + response[index].cardNumber + "</option>");
 			});
 		}, "json");
-	});
-});
+	}
+}
 
 
 </script>
@@ -67,6 +87,7 @@ $(document).ready(function() {
 			<div class="row">
 				<form class="col s12" id="post-form">
 					<h4>Place Business Order</h4>
+					<div id='errors' class='msgbox_red' style='display:none;'></div>
 					<div class="row">
 						<div class="input-field col s6">
 						<select class="browser-default" id="custs" name='customer'>
