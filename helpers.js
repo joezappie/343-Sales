@@ -3,23 +3,65 @@ var validator = require('validator');
 var nodemailer = require('nodemailer');
 
 module.exports = {
+
 	createCustomer: function(info) {
+		var self = this;
+		
 		return new Promise(function(resolve, reject) {
 			models.TaxRates.findAll().then(function(states) {
-	
+				
 				var response = {errors:{}, success: false};
 				
-				// validate customer info
-				if(!info.hasOwnProperty("lastName") || info.lastName.length < 2) {
-					response.errors.lastName = 'To short';
-				} else if(info.lastName.length > 50) {
-					response.errors.lastName = 'To long';
+				function validateAddress(prefix) {
+					if(!info.hasOwnProperty(prefix + "_firstname") || info[prefix + "_firstname"].length < 2) {
+						response.errors[prefix + "_firstname"] = 'To short';
+					} else if(info[prefix + "_firstname"].length > 50) {
+						response.errors[prefix + "_firstname"] = 'To long';
+					}
+							
+					if(!info.hasOwnProperty(prefix + "_lastname") || info[prefix + "_lastname"].length < 2) {
+						response.errors[prefix + "_lastname"] = 'To short';
+					} else if(info[prefix + "_lastname"].length > 50) {
+						response.errors[prefix + "_lastname"] = 'To long';
+					}
+					
+					if(!info.hasOwnProperty(prefix + "_address") || info[prefix + "_address"] < 3) {
+						response.errors[prefix + "_address"] = 'Invalid street address';
+					}
+
+					if(!info.hasOwnProperty(prefix + "_city") || info[prefix + "_city"] < 3) {
+						response.errors[prefix + "_city"] = 'Invalid city';
+					}
+
+					var zipPattern = new RegExp(/(^\d{5}$)|(^\d{5}-\d{4}$)/);
+					if(!info.hasOwnProperty(prefix + "_zipcode") || !zipPattern.test(info[prefix + "_zipcode"])) {
+						response.errors[prefix + "_zipcode"] = 'Invalid zipcode';
+					}
+
+					if(!info.hasOwnProperty(prefix + "_state")) {
+						response.errors[prefix + "_state"] = 'Select a state'
+					} else {
+						var foundState = false;
+						states.forEach(function(st) {
+							if(st.id == info[prefix + "_state"]) {
+								foundState = true;
+								return;
+							}
+						});
+
+						if(!foundState) {
+							errors[prefix + "_state"] = 'Invalid State';
+						}
+					}
 				}
-				
-				if(!info.hasOwnProperty("firstName") || info.firstName.length < 2) {
-					response.errors.firstName = 'To short';
-				} else if(info.firstName.length > 50) {
-					response.errors.firstName = 'To long';
+	
+				// validate customer info
+				if(info.hasOwnProperty("company")) {
+					if(info.company.length < 2) {
+						response.errors.company = 'To short';
+					} else if(info.company.length > 50) {
+						response.errors.company = 'To long';
+					}
 				}
 				
 				if(!info.hasOwnProperty("email") || !validator.isEmail(info.email)) {
@@ -58,81 +100,77 @@ module.exports = {
 						response.errors.expiration_month = 'Invalid';
 					}
 				}
-
-				if(!info.hasOwnProperty("address") || info.address < 3) {
-					response.errors.address = 'Invalid street address';
-				}
-
-				if(!info.hasOwnProperty("city") || info.city < 3) {
-					response.errors.city = 'Invalid city';
-				}
-
-				var zipPattern = new RegExp(/(^\d{5}$)|(^\d{5}-\d{4}$)/);
-				if(!info.hasOwnProperty("zipcode") || !zipPattern.test(info.zipcode)) {
-					response.errors.zipcode = 'Invalid zipcode';
-				}
-
-				if(!info.hasOwnProperty("state")) {
-					response.errors.state = 'Select a state'
-				} else {
-					var foundState = false;
-					states.forEach(function(st) {
-						if(st.id == info.state) {
-							foundState = true;
-							return;
-						}
-					});
-
-					if(!foundState) {
-						response.errors.state = 'Invalid State';
-					}
-				}
 				
-				// Ensure isCompany is boolean
-				info.isCompany = (info.hasOwnProperty("isCompany") && (info.isCompany == true || info.isCompany == '1' || info.isCompany == 'true'));
+				// Validate the shipping address
+				validateAddress("shipping");
 				
+				// Validate the billing address
+				validateAddress("billing");
+
 				// If there are no response.errors create the objects
 				if(Object.keys(response.errors).length == 0) {
 					var customerData = {
-						password: "",
-						phoneNumber: info.phone,
-						email: info.email,
-						firstName: info.firstName,
-						lastName: info.lastName,
-						isCompany: info.isCompany,
+						"password": "",
+						"phoneNumber": info.phone,
+						"email": info.email,
+						"company": null
 					}
-
+					
+					if(info.hasOwnProperty("company")) {
+						customerData.company = info.company;
+					}
+					
 					models.Customer.create(customerData).then(function(customer) {
-						var addressData = {
-							address: info.address,
-							city: info.city,
-							zip: info.zipcode,
-							stateId: info.state,
+						
+						var billingAddressData = {
+							address: info.billing_address,
+							city: info.billing_city,
+							zip: info.billing_zipcode,
+							stateId: info.billing_state,
+							firstName: info.billing_firstname,
+							lastName: info.billing_lastname,
 							customerId: customer.id,
-							firstName: customer.firstName,
-							lastName: customer.lastName,
 						}
 						
-						models.Address.create(addressData).then(function(address) {
-							var paymentData = {
-								cardNumber: info.card_number,
-								CVC: info.cvc,
-								expirationDate: info.expiration_date,
-								billingAddressId: address.id,
-							}
-							
-							models.PaymentMethod.create(paymentData).then(function(payment) {
-								response.success = true;
-								response.customer = customer;
-								resolve(response);
+						var shippingAddressData = {
+							address: info.shipping_address,
+							city: info.shipping_city,
+							zip: info.shipping_zipcode,
+							stateId: info.shipping_state,
+							firstName: info.shipping_firstname,
+							lastName: info.shipping_lastname,
+							customerId: customer.id,
+						}
+						
+						models.Address.create(shippingAddressData).then(function(shippingAddress) {
+							models.Address.create(billingAddressData).then(function(billingAddress) {
+								
+								var paymentData = {
+									cardNumber: info.card_number,
+									CVC: info.cvc,
+									expirationDate: info.expiration_date,
+									billingAddressId: billingAddress.id,
+								}	
+								
+								models.PaymentMethod.create(paymentData).then(function(payment) {
+									response.success = true;
+									response.customer = customer;
+									resolve(response);
+								}).catch(function(err) {
+									response.err = err;
+									reject(response);
+								});
 							}).catch(function(err) {
+								response.err = err;
 								reject(response);
 							});
 						}).catch(function(err) {
+							response.err = err;
 							reject(response);
 						});
 						
 					}).catch(function(err) {
+						response.err = err;
 						reject(response);
 					});
 				

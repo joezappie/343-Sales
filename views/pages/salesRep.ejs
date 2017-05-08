@@ -44,7 +44,7 @@ $(document).ready(function() {
 							<select class="browser-default" id="custs">
 							<option value="" disabled selected>Select Business Customer</option>
 									<% customers.forEach(function(customer) { %>
-									<option><%= customer.id %>, <%= customer.lastName %>, <%=customer.firstName %></option>
+								  	<option><%= customer.company %></option>
 									<% }); %>
 							</select>
 							</div>

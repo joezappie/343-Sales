@@ -8,8 +8,6 @@ module.exports = db.define('customer', {
         primaryKey: true,
         autoIncrement: true
     },
-    firstName: { type: Sequelize.STRING, allowNull: false},
-    lastName: { type: Sequelize.STRING, allowNull: false},
     email: { type: Sequelize.STRING, allowNull: false},
     password: { 
 		type: Sequelize.STRING(32), 
@@ -19,7 +17,7 @@ module.exports = db.define('customer', {
 		},
 	},
     phoneNumber:  { type: Sequelize.STRING(20), allowNull: false},
-    isCompany: {type: Sequelize.BOOLEAN, allowNull: false},
+    company: {type: Sequelize.STRING(50) },
   },
   //Start class settings
   {timestamps: false, freezeTableName: true, tableName: 'Customer',
