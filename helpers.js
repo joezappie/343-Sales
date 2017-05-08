@@ -5,6 +5,7 @@ var request = require('request');
 
 var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/";
 var MIN_BUSINESS_QUANTITY = 100;
+var BUSINESS_DISCOUNT = 0.1;
 
 module.exports = {
 
@@ -222,9 +223,18 @@ module.exports = {
 					});
 				}
 				
-				// Businesses have a min quanity requirement
-				if(isBusiness && totalQuantity < MIN_BUSINESS_QUANTITY) {
-					response.errors.lowQuanity = "Minimum phone quantity is " + MIN_BUSINESS_QUANTITY;
+
+				// Business Purchase Logic
+				if(isBusiness) {
+					
+					// Businesses have to purchase a minimum amount
+					if(totalQuantity < MIN_BUSINESS_QUANTITY) {
+						response.errors.lowQuanity = "Minimum phone quantity is " + MIN_BUSINESS_QUANTITY;
+					}
+					
+					// Apply discount 
+					totalCost = totalCost - (totalCost * BUSINESS_DISCOUNT);
+					
 				} 
 				
 				if(Object.keys(response.errors).length == 0) {
@@ -261,22 +271,23 @@ module.exports = {
 										as: "billingAddress",
 										where: {
 											customerId: customer.id,
-										}
-									}
+										},
+										include: [{ "all": true }]
+									},
 								]
 							}).then(function(billingResults) {
 								// Check that we got a result back
 								if(billingResults.length == 0) {
 									throw 'Invalid';
 								}
-								
+			
 								// Everything checks out so place order
 								var orderInfo = {
 									totalItemCost: totalCost,
 									shippingCost: 0,
 									orderDate: new Date(),
 									isPaid: true,
-									taxPercentage: .06,
+									taxPercentage: billingResults.billingAddress.state.rate,
 									customerId: customer.id,
 									shippingAddressId: shippingResults.id,
 									paymentMethodId: billingResults.id,
@@ -295,7 +306,7 @@ module.exports = {
 											orderItems.push({
 												serialNumber: 1,
 												modelId: index,
-												price: phoneModels[index].price,
+												price: phoneModels[index].price - (phoneModels[index].price * BUSINESS_DISCOUNT),
 												isPaid: true,
 												replacementDeadline: new Date(),
 												refundDeadline: new Date(),
