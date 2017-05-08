@@ -6,6 +6,7 @@ var request = require('request');
 var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/";
 var MIN_BUSINESS_QUANTITY = 100;
 var BUSINESS_DISCOUNT = 0.1;
+var RETURN_PERIOD = 30;
 
 module.exports = {
 
@@ -320,14 +321,15 @@ module.exports = {
 											// Create order item for each phone
 											for(var x = 0; x < val.quantity; x++) {
 												// TODO: get a new serial number
-												// TODO: Calculate refund/replace deadlines
+												var deadline = new Date();
+												deadline.setDate(deadline.getDate() + RETURN_PERIOD);
 												orderItems.push({
 													serialNumber: 1,
 													modelId: index,
 													price: phoneModels[index].price - (phoneModels[index].price * BUSINESS_DISCOUNT),
 													isPaid: true,
-													replacementDeadline: new Date(),
-													refundDeadline: new Date(),
+													replacementDeadline: deadline,
+													refundDeadline: deadline,
 													orderId: orderResult.id
 												});
 											}
