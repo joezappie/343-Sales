@@ -8,7 +8,7 @@ var router = express.Router();
 router.use('/api', require('./api'));
 router.use('/consumed', require('./consumed'));
 
-var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu:5000/inventory/";
+var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/inventory/";
 var SALES_BASE_URL = "http://vm343c.se.rit.edu/"
 var LOCAL_BASE_URL = "http://localhost:8080/"
 
@@ -102,6 +102,11 @@ router.get('/apiTest', function(req, res) {
 
 router.get('/recall', function(req, res, next) {
 	res.render('pages/recallForm');
+});
+
+router.post('/ordertest', function(req, res, next) {
+  res.render('pages/newCustomer');
+  console.log(req.body);
 });
 
 router.post('/recall', function(req, res, next) {
