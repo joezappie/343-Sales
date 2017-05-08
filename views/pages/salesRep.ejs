@@ -25,7 +25,7 @@ $(document).ready(function() {
 		var cName = String(conceptName).split(",");
 		console.log(cName[0]);
 		$("#customerId").val(cName[0]);
-		$.post("/ordertest", $("#post-form").serialize(), alert("Order has been placed"));
+		$.post("/order/placeBusinessOrder", $("#post-form").serialize(), alert("Order has been placed"));
 	});
 });
 </script>
