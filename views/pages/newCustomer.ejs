@@ -8,6 +8,24 @@
 		<%- include employee-navbar.ejs %>
 		<div class='container topSpacing'>
 			<script>
+			
+				function useBillingInfo()
+				{
+					//set shipping to billing
+					document.getElementById("shipping_first_name").value = document.getElementById("billing_first_name").value;
+					document.getElementById("shipping_last_name").value = document.getElementById("billing_last_name").value;
+					document.getElementById("shipping_address").value = document.getElementById("billing_address").value;
+					document.getElementById("shipping_city").value = document.getElementById("billing_city").value;
+					document.getElementById("shipping_zip_code").value = document.getElementById("billing_zip_code").value;
+					document.getElementById("shipping_state").value = document.getElementById("billing_state").value;
+
+					//update dropdown menu with new value
+					$('select').material_select();
+
+					//redraw labels so they don't overlap with text
+					Materialize.updateTextFields()
+				}
+				
 				$(document).ready(function() {
 
 					$("select").material_select();
@@ -141,6 +159,12 @@
 						</div>
 						<div class='sectionSpacer'></div>
 						<label style="font-size:1.5rem;color:#000000;">Shipping Information</label>
+						<div class="row">
+							<div class="input-field col s4" onclick="useBillingInfo()" style='cursor:pointer;'>
+								<i class="material-icons left">replay</i>
+								<div class='left pink-text lighten-2'>Copy From Billing</div>
+							</div>
+						</div>
 						<div class="row" style='margin-top:20px;'>
 							<div class="input-field col s4">
 								<i class="material-icons prefix">account_circle</i>
