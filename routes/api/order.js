@@ -1,6 +1,7 @@
 var models = require(__base + 'models.js');
 var express = require('express');
 var Sequelize = require('sequelize');
+var helpers = require(__base + 'helpers.js');
 
 var router = express.Router();
 
@@ -29,6 +30,38 @@ router.get('/', function(req,res,next){
 		res.json({error: err});
 	});  
 	
+});
+
+router.post('/placeOrder', async function(req,res,next) {
+	var customerId;
+	var items = req.body.items;
+	
+	helpers.createCustomer(req.body).then(function(customerRes) {
+		if (!customerRes.success) {
+			res.status(400).json(customerInfo.errors);
+		}
+
+		helpers.createOrder(customerId, items).then(function(orderRes) {
+			if (!orderRes.success) {
+				res.status(400).json(orderRes.errors);
+			}
+			
+			res.json(orderRes.items);
+		});
+	});
+});
+
+router.post('/placeBusinessOrder', async function(req,res,next) {
+	var customerId = req.body.customerId;
+	var items = req.body.items;
+	
+	helpers.createOrder(customerId, items).then(function(orderRes) {
+		if (!orderRes.success) {
+			res.status(400).json(orderRes.errors);
+		}
+		
+		res.json(orderRes.items);
+	});
 });
 
 router.get('/search', function(req,res,next){
