@@ -128,6 +128,10 @@ router.get('/customerCheckout', function(req, res) {
 	});
 });
 
+router.get('/checkoutComplete', function(req, res) {
+	res.render('pages/checkoutComplete', {info: req.body});
+});
+
 router.get('/newCustomer', function(req, res) {
 	models.TaxRates.findAll().then(function(states) {
 		res.render('pages/newCustomer', {states: states});

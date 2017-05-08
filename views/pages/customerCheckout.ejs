@@ -8,51 +8,68 @@
 <script>
 	function useBillingInfo()
 	{
-		if (document.getElementById("shipping_is_billing").checked == true)
-		{
-			//store values if we uncheck
-			shippingFirstName = document.getElementById("shipping_first_name").value;
-			shippingLastName = document.getElementById("shipping_last_name").value;
-			shippingStreetAddress = document.getElementById("shipping_street_address").value;
-			shippingCity = document.getElementById("shipping_city").value;
-			shippingZipCode = document.getElementById("shipping_zip_code").value;
-			shippingState = document.getElementById("shipping_state").value;
+		//set shipping to billing
+		document.getElementById("shipping_first_name").value = document.getElementById("billing_first_name").value;
+		document.getElementById("shipping_last_name").value = document.getElementById("billing_last_name").value;
+		document.getElementById("shipping_address").value = document.getElementById("billing_address").value;
+		document.getElementById("shipping_city").value = document.getElementById("billing_city").value;
+		document.getElementById("shipping_zip_code").value = document.getElementById("billing_zip_code").value;
+		document.getElementById("shipping_state").value = document.getElementById("billing_state").value;
 
-			//set shipping to billing
-			document.getElementById("shipping_first_name").value = document.getElementById("cardholder_first_name").value;
-			document.getElementById("shipping_last_name").value = document.getElementById("cardholder_last_name").value;
-			document.getElementById("shipping_street_address").value = document.getElementById("billing_street_address").value;
-			document.getElementById("shipping_city").value = document.getElementById("billing_city").value;
-			document.getElementById("shipping_zip_code").value = document.getElementById("billing_zip_code").value;
-			document.getElementById("shipping_state").value = document.getElementById("billing_state").value;
+		//update dropdown menu with new value
+		$('select').material_select();
 
-			//update dropdown menu with new value
-			$('select').material_select();
-
-			//redraw labels so they don't overlap with text
-			Materialize.updateTextFields()
-		}
-		else
-		{
-			//restore stored values
-			document.getElementById("shipping_first_name").value = shippingFirstName;
-			document.getElementById("shipping_last_name").value = shippingLastName;
-			document.getElementById("shipping_street_address").value = shippingStreetAddress;
-			document.getElementById("shipping_city").value = shippingCity;
-			document.getElementById("shipping_zip_code").value = shippingZipCode;
-			document.getElementById("shipping_state").value = shippingState;
-
-			//update dropdown menu with new value
-			$('select').material_select();
-
-			//redraw labels so they don't overlap with text
-			Materialize.updateTextFields()
-		}
+		//redraw labels so they don't overlap with text
+		Materialize.updateTextFields()
 	}
+	
+	$(document).ready(function() {
+		
+		// Load shipping options
+		var shippingOptions = $("#shippingOptions");
+		$.get("api/shippingOptions", function( response ) {
+			$(response).each(function(index) {
+				shippingOptions.append("<option value='" + response[index].id + "'>$" + parseFloat(response[index].price).toFixed(2) + " - " +response[index].name + "</option>");
+			});
+			
+			shippingOptions.material_select();
+		}, "json");
+		
+		$('select').material_select();
+		
+		$( "#placeOrderForm" ).submit(function( event ) {
+			$("#placeOrderForm .invalid").removeClass("invalid");
+			
+			$.post("api/order/placeOrder", $("#placeOrderForm").serialize(), function( response ) {
+				console.log(response);
+				if(response.hasOwnProperty("success") && response.success) {
+					window.location = "/checkoutComplete";
+					localStorage.clear();
+				} else if(response.hasOwnProperty("errors")) {
+					for(var input in response.errors) {
+						var element = $("#" + input);
+						
+						if(element.is("select")) {
+							element = element.siblings("input");
+						}
+						
+						element.addClass("invalid");
+						element.siblings("label").attr("data-error", response.errors[input]);
+					};
+				}
+				
+				$("html, body").animate({ scrollTop: "0px" });
+				
+			}, "json");
+			
+			event.preventDefault();
+		});
+
+	});
 </script>
 <body>
 	<%- include consumer-navbar.ejs %>
-	<div class="bigContainer" >
+	<div class="container storeContainer" >
 		<nav class="storeBreadcrumbs transparent">
 			<div class="nav-wrapper">
 				<div class="col s12">
@@ -63,89 +80,93 @@
 			</div>
 		</nav>
 		<div class="row">
-			<form class="col s12">
+			<form id='placeOrderForm' class="col s12">
 				<div class="col s8">
+					<div class='sectionSpacer'></div>
+					<label style="font-size:1.5rem;color:#000000;">Customer Information</label>
 					<div class="row">
-						<h5>Credit Card Information:</h5>
-					</div>
-					<div class="row">
-						<div class="input-field col s5">
-							<label for="credit_card_num" >Credit Card Number</label>
-							<input id="credit_card_num" name="credit_card_num" type="text" class="validate"/>
-						</div>
-						<div class="input-field col s2">
-							<Label for="cardholder_first_name">First Name</Label>
-							<input id="cardholder_first_name" name="cardholder_first_name" type="text" class="validate"/>
+						<div class="input-field col s4">
+							<input id="email" name="email" type="text" class="validate">
+							<label for="email">Email Address</label>
 						</div>
 						<div class="input-field col s3">
-							<Label for="cardholder_last_name">Last Name</Label>
-							<input id="cardholder_last_name" name="cardholder_last_name" type="text" class="validate"/>
+							<input id="phone" name="phone" type="text" class="validate">
+							<label for="phone">Phone Number</label>
+						</div>
+					</div>
+					<div class='sectionSpacer'></div>
+					<label style="font-size:1.5rem;color:#000000;">Credit Card Information</label>
+					<div class="row">
+						<div class="input-field col s5">
+							<input id="card_number" name="card_number" type="text" class="validate"/>
+							<label for="card_number" >Credit Card Number</label>
+						</div>
+						<div class="input-field col s2">
+							<input id="billing_first_name" name="billing_first_name" type="text" class="validate"/>
+							<label for="billing_first_name">First Name</label>
+						</div>
+						<div class="input-field col s3">
+							<label for="billing_last_name">Last Name</label>
+							<input id="billing_last_name" name="billing_last_name" type="text" class="validate"/>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s2">
-							<label for="security_code">Security Code</label>
-							<input id="security_code" name="security_code" type="text" style="text-align:center;" class="validate"/>
+							<input id="cvc" name="cvc" type="text" class="validate"/>
+							<label for="cvc">Security Code</label>
 						</div>
-						<div class="input-field col s3 offset-s1" style="text-align:right;">
-							<label>Expiration Date:</label>
+						<div class="input-field col s2 offset-s1" style="text-align:right;">
+							<label>Expiration:</label>
 						</div>
-						<div class="input-field col s2">
-							<select id="expiration_date_month" name="expiration_date_month" class="browser-default">
-								<option value="1">January</option>
-								<option value="2">Febrary</option>
-								<option value="3">March</option>
-								<option value="4">April</option>
-								<option value="5">May</option>
-								<option value="6">June</option>
-								<option value="7">July</option>
-								<option value="8">August</option>
-								<option value="9">September</option>
-								<option value="10">October</option>
-								<option value="11">November</option>
-								<option value="12">December</option>
+						<div class="input-field col s3">
+							<select id="expiration_month" name="expiration_month">
+								<option value="" disabled selected>Month</option>
+								<option value="1">01 - January</option>
+								<option value="2">02 - Febrary</option>
+								<option value="3">03 - March</option>
+								<option value="4">04 - April</option>
+								<option value="5">05 - May</option>
+								<option value="6">06 - June</option>
+								<option value="7">07 - July</option>
+								<option value="8">08 - August</option>
+								<option value="9">09 - September</option>
+								<option value="10">10 - October</option>
+								<option value="11">11 - November</option>
+								<option value="12">12 - December</option>
 							</select>
 						</div>
 						<div class="input-field col s2">
-							<select id="expiration_year" name="expiration_year" class="browser-default">
-								<option value="2017">2017</option>
-								<option value="2018">2018</option>
-								<option value="2019">2019</option>
-								<option value="2020">2020</option>
-								<option value="2021">2021</option>
-								<option value="2022">2022</option>
-								<option value="2023">2023</option>
-								<option value="2024">2024</option>
-								<option value="2025">2025</option>
-								<option value="2026">2026</option>
-								<option value="2027">2027</option>
+							<select name='expiration_year' id="expiration_year" class='validate'>
+								<option value="" disabled selected>Year</option>
+								<% for(var i=new Date().getFullYear(); i< new Date().getFullYear() + 15; i++) {%>
+								   <option value="<%= i %>"><%= i %></option>
+								<% } %>
 							</select>
 						</div>
 					</div>
-					<div class="row">
-						<h5>Billing Address:</h5>
-					</div>
+					<div class='sectionSpacer'></div>
+					<label style="font-size:1.5rem;color:#000000;">Billing Address</label>
 					<div class="row">
 						<div class="input-field col s5">
-							<Label for="billing_street_address">Street Address</Label>
-							<input id="billing_street_address" name="billing_street_address" type="text" class="validate"/>
+							<input id="billing_address" name="billing_address" type="text" class="validate"/>
+							<label for="billing_address">Street Address</label>
 						</div>
 						<div class="input-field col s5">
-							<Label for="billing_city">City</Label>
 							<input id="billing_city" name="billing_city" type="text" class="validate"/>
+							<label for="billing_city">City</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s3">
-							<Label for="billing_zip_code">Zip Code</Label>
 							<input id="billing_zip_code" name="billing_zip_code" type="text" class="validate"/>
+							<label for="billing_zip_code">Zip Code</label>
 						</div>
 						<div class="input-field col s2 offset-s1">
 							<label>State:</label>
 						</div>
 						<div class="input-field col s4">
 							<!--I couldn't get this to work.-->
-							<select id='billing_state' name='billing_state' class="browser-default">
+							<select id='billing_state' name='billing_state'>
 								<option value="" disabled selected>Select State/Territory</option>
 								<% states.forEach(function(st) { %>
 									<option value="<%= st.id %>"><%= st.state %></option>
@@ -153,44 +174,44 @@
 							</select>
 						</div>
 					</div>
+					<div class='sectionSpacer'></div>
+					<label style="font-size:1.5rem;color:#000000;">Shipping Address</label>
 					<div class="row">
-						<h5>Shipping Address:</h5>
-					</div>
-					<div class="row">
-						<div class="input-field col s4">
-								<input type="checkbox" class="filled-in" id="shipping_is_billing" name="shipping_is_billing" onclick="useBillingInfo()"/>
-								<label for="shipping_is_billing">Use Billing Address</label>
-						</div>
-						<div class="input-field col s2 offset-s1">
-							<Label for="shipping_first_name">First Name</Label>
-							<input id="shipping_first_name" name=="shipping_first_name" type="text" class="validate"/>
-						</div>
-						<div class="input-field col s3">
-							<Label for="shipping_last_name">Last Name</Label>
-							<input id="shipping_last_name" name=="shipping_last_name" type="text" class="validate"/>
+						<div class="input-field col s4" onclick="useBillingInfo()" style='cursor:pointer;'>
+							<i class="material-icons left">replay</i>
+							<div class='left pink-text lighten-2'>Copy From Billing</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s5">
-							<Label for="shipping_street_address">Street Address</Label>
-							<input id="shipping_street_address" name="shipping_street_address" type="text" class="validate"/>
+							<input id="shipping_first_name" name="shipping_first_name" type="text" class="validate"/>
+							<label for="shipping_first_name">First Name</label>
 						</div>
 						<div class="input-field col s5">
-							<Label for="shipping_city">City</Label>
+							<input id="shipping_last_name" name="shipping_last_name" type="text" class="validate"/>
+							<label for="shipping_last_name">Last Name</label>
+						</div>
+					</div>
+					<div class="row">
+						<div class="input-field col s5">
+							<input id="shipping_address" name="shipping_address" type="text" class="validate"/>
+							<label for="shipping_address">Street Address</label>
+						</div>
+						<div class="input-field col s5">
 							<input id="shipping_city" name="shipping_city" type="text" class="validate"/>
+							<label for="shipping_city">City</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s3">
-							<Label for="shipping_zip_code">Zip Code</Label>
 							<input id="shipping_zip_code" name="shipping_zip_code" type="text" class="validate"/>
+							<label for="shipping_zip_code">Zip Code</label>
 						</div>
 						<div class="input-field col s2 offset-s1">
 							<label>State:</label>
 						</div>
 						<div class="input-field col s4">
-							<!--I couldn't get this to work.-->
-							<select id='shipping_state' name='shipping_state' class="browser-default">
+							<select id='shipping_state' name='shipping_state'>
 								<option value="" disabled selected>Select State/Territory</option>
 								<% states.forEach(function(st) { %>
 									<option value="<%= st.id %>"><%= st.state %></option>
@@ -199,8 +220,8 @@
 						</div>
 					</div>
 					<div class="row">
-						<button class="btn waves-effect waves-light" type="submit" name="submit">
-							Submit
+						<button class="btn waves-effect waves-light" type="submit" name="action">
+							Place Order
 							<i class="material-icons right">send</i>
 						</button>
 					</div>
@@ -216,6 +237,13 @@
 						</thead>
 						<tbody class="cartTbody"/>
 					</table>
+					
+					<h5 style='margin:30px 0px 0px 0px;'>Shipping Method</h5>
+					<div class="row">
+						<div class="input-field col s12">
+							<select id="shippingOptions" name='shippingOptions'></select>
+						</div>
+					</div>
 				</div>
 			</form>
 			</div>

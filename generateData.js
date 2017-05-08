@@ -53,6 +53,11 @@ Promise.all(promises).then(function() {
 	}
 });
 
+var shippingOptions = [{name:"Free", price: 0},{name:"Economy", price: 3.99},{name:"Overnight", price: 12.99},{name:"1 Hour Delivery", price: 1000}];
+
+// Create shipping options
+models.ShippingCosts.bulkCreate(shippingOptions).then(function(result) {});
+
 function generateCustomer(data) {
 	models.Customer.create(data).then(function(result) {
 	customer = {"model": result.dataValues, "addresses": [], "paymentMethods": [], "orders": []};

@@ -1,8 +1,8 @@
 var Sequelize = require('sequelize');
 var db = require("../database.js");
 
-// Customer Definition
-Customer = db.define('shippingCosts', {
+// Shipping Costs Definition
+module.exports = db.define('shippingCosts', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,

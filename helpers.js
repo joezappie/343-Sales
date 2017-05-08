@@ -3,8 +3,9 @@ var validator = require('validator');
 var nodemailer = require('nodemailer');
 var request = require('request');
 
-var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/inventory/";
+var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/";
 var MIN_BUSINESS_QUANTITY = 100;
+var BUSINESS_DISCOUNT = 0.1;
 
 module.exports = {
 
@@ -17,16 +18,16 @@ module.exports = {
 				var response = {errors:{}, success: false};
 				
 				function validateAddress(prefix) {
-					if(!info.hasOwnProperty(prefix + "_firstname") || info[prefix + "_firstname"].length < 2) {
-						response.errors[prefix + "_firstname"] = 'To short';
-					} else if(info[prefix + "_firstname"].length > 50) {
-						response.errors[prefix + "_firstname"] = 'To long';
+					if(!info.hasOwnProperty(prefix + "_first_name") || info[prefix + "_first_name"].length < 2) {
+						response.errors[prefix + "_first_name"] = 'To short';
+					} else if(info[prefix + "_first_name"].length > 50) {
+						response.errors[prefix + "_first_name"] = 'To long';
 					}
 							
-					if(!info.hasOwnProperty(prefix + "_lastname") || info[prefix + "_lastname"].length < 2) {
-						response.errors[prefix + "_lastname"] = 'To short';
-					} else if(info[prefix + "_lastname"].length > 50) {
-						response.errors[prefix + "_lastname"] = 'To long';
+					if(!info.hasOwnProperty(prefix + "_last_name") || info[prefix + "_last_name"].length < 2) {
+						response.errors[prefix + "_last_name"] = 'To short';
+					} else if(info[prefix + "_last_name"].length > 50) {
+						response.errors[prefix + "_last_name"] = 'To long';
 					}
 					
 					if(!info.hasOwnProperty(prefix + "_address") || info[prefix + "_address"] < 3) {
@@ -38,8 +39,8 @@ module.exports = {
 					}
 
 					var zipPattern = new RegExp(/(^\d{5}$)|(^\d{5}-\d{4}$)/);
-					if(!info.hasOwnProperty(prefix + "_zipcode") || !zipPattern.test(info[prefix + "_zipcode"])) {
-						response.errors[prefix + "_zipcode"] = 'Invalid zipcode';
+					if(!info.hasOwnProperty(prefix + "_zip_code") || !zipPattern.test(info[prefix + "_zip_code"])) {
+						response.errors[prefix + "_zip_code"] = 'Invalid zipcode';
 					}
 
 					if(!info.hasOwnProperty(prefix + "_state")) {
@@ -129,20 +130,20 @@ module.exports = {
 						var billingAddressData = {
 							address: info.billing_address,
 							city: info.billing_city,
-							zip: info.billing_zipcode,
+							zip: info.shipping_zip_code,
 							stateId: info.billing_state,
-							firstName: info.billing_firstname,
-							lastName: info.billing_lastname,
+							firstName: info.billing_first_name,
+							lastName: info.billing_last_name,
 							customerId: customer.id,
 						}
 						
 						var shippingAddressData = {
 							address: info.shipping_address,
 							city: info.shipping_city,
-							zip: info.shipping_zipcode,
+							zip: info.shipping_zip_code,
 							stateId: info.shipping_state,
-							firstName: info.shipping_firstname,
-							lastName: info.shipping_lastname,
+							firstName: info.shipping_first_name,
+							lastName: info.shipping_last_name,
 							customerId: customer.id,
 						}
 						
@@ -159,6 +160,8 @@ module.exports = {
 								models.PaymentMethod.create(paymentData).then(function(payment) {
 									response.success = true;
 									response.customer = customer;
+									response.payment = payment;
+									response.shipping = shippingAddress;
 									resolve(response);
 								}).catch(function(err) {
 									response.err = err;
@@ -185,12 +188,12 @@ module.exports = {
 		});
 	},
 	
-	createOrder: function(info, business) {
+	createOrder: function(info, isBusiness) {
 		var self = this;
 		
 		return new Promise(function(resolve, reject) {
 			// Load the phones
-			request(INVENTORY_BASE_URL + 'models/all', function (error, response, body) {
+			request(INVENTORY_BASE_URL + 'inventory/models/all', function (error, response, body) {
 				
 				var phoneModels = [];
 				
@@ -208,8 +211,8 @@ module.exports = {
 				var totalQuantity = 0;
 				
 				// Calculate the total order price and check that all the phones selected are valid
-				if(info.hasOwnProperty("phone")) {
-					info.phone.forEach(function(val, index) {
+				if(info.hasOwnProperty("phone_model")) {
+					info.phone_model.forEach(function(val, index) {
 						if(typeof phoneModels[index] !== 'undefined') {
 							var quanity = parseInt(val.quantity);
 							totalCost += phoneModels[index].price * quanity;
@@ -220,64 +223,89 @@ module.exports = {
 					});
 				}
 				
+
+				// Business Purchase Logic
+				if(isBusiness) {
+					
+					// Businesses have to purchase a minimum amount
+					if(totalQuantity < MIN_BUSINESS_QUANTITY) {
+						response.errors.lowQuanity = "Minimum phone quantity is " + MIN_BUSINESS_QUANTITY;
+					}
+					
+					// Apply discount 
+					totalCost = totalCost - (totalCost * BUSINESS_DISCOUNT);
+					
+				} 
+				
 				if(Object.keys(response.errors).length == 0) {
 					
-					if(business) {
-						// Business customer checkout
-						var customerId = parseInt(info.customer);
+					var customerId = parseInt(info.customer);
+					
+					// Check that the customer exists
+					models.Customer.findOne({
+						where: {
+							id: customerId,
+						}
+					}).then(function(customer) {
 						
-						// Businesses have a min quanity requirement
-						if(totalQuantity < MIN_BUSINESS_QUANTITY) {
-							response.errors.lowQuanity = "Minimum phone quantity is " + MIN_BUSINESS_QUANTITY;
-							reject(response);
-						} 
-						
-						// Check that the customer exists
-						models.Customer.findOne({
+						// Validate shipping address
+						models.Address.findOne({
 							where: {
-								id: customerId,
+								customerId: customer.id,
+								id: parseInt(info.shipping)
 							}
-						}).then(function(customer) {
+						}).then(function(shippingResults) {
+							// Check that we got a result back
+							if(shippingResults.length == 0) {
+								throw 'Invalid';
+							}
 							
-							// Validate shipping address
-							models.Address.findOne({
+							// Validate payment method
+							models.PaymentMethod.findOne({
 								where: {
-									customerId: customer.id,
-									id: parseInt(info.shipping)
-								}
-							}).then(function(shippingResults) {
+									id: parseInt(info.payment),
+								},
+								include: [
+									{ 
+										model: models.Address,
+										as: "billingAddress",
+										where: {
+											customerId: customer.id,
+										},
+										include: [{ "all": true }]
+									},
+								]
+							}).then(function(billingResults) {
+								
 								// Check that we got a result back
-								if(shippingResults.length == 0) {
+								if(billingResults.length == 0) {
 									throw 'Invalid';
 								}
 								
-								// Validate payment method
-								models.PaymentMethod.findOne({
+								// Default to free shipping
+								if(!info.hasOwnProperty("shippingOptions")) {
+									info.shippingOptions = 1;
+								}
+								
+								// Validate shipping price
+								models.ShippingCosts.findOne({
 									where: {
-										id: parseInt(info.payment),
-									},
-									include: [
-										{ 
-											model: models.Address,
-											as: "billingAddress",
-											where: {
-												customerId: customer.id,
-											}
-										}
-									]
-								}).then(function(billingResults) {
+										id: parseInt(info.shippingOptions),
+									}
+								}).then(function(shippingOptions) {
+									
 									// Check that we got a result back
-									if(billingResults.length == 0) {
+									if(shippingOptions.length == 0) {
 										throw 'Invalid';
 									}
-									
+				
 									// Everything checks out so place order
 									var orderInfo = {
 										totalItemCost: totalCost,
-										shippingCost: 0,
+										shippingCost: shippingOptions.price,
 										orderDate: new Date(),
 										isPaid: true,
-										taxPercentage: .06,
+										taxPercentage: billingResults.billingAddress.state.rate,
 										customerId: customer.id,
 										shippingAddressId: shippingResults.id,
 										paymentMethodId: billingResults.id,
@@ -288,7 +316,7 @@ module.exports = {
 										var orderItems = [];
 										
 										// Create the actual items
-										info.phone.forEach(function(val, index) {
+										info.phone_model.forEach(function(val, index) {
 											// Create order item for each phone
 											for(var x = 0; x < val.quantity; x++) {
 												// TODO: get a new serial number
@@ -296,14 +324,13 @@ module.exports = {
 												orderItems.push({
 													serialNumber: 1,
 													modelId: index,
-													price: phoneModels[index].price,
+													price: phoneModels[index].price - (phoneModels[index].price * BUSINESS_DISCOUNT),
 													isPaid: true,
 													replacementDeadline: new Date(),
 													refundDeadline: new Date(),
 													orderId: orderResult.id
 												});
 											}
-						
 										});
 										
 										// Run query to create items
@@ -315,32 +342,31 @@ module.exports = {
 											resolve(response);
 										}).catch(function(err) {
 											response.errors.address = "Couldn't place order";
-											response.err = err;
 											reject(response);
 										});
-										
 									}).catch(function(err) {
 										response.errors.address = "Failed to place order";
 										reject(response);
 									});
-									
 								}).catch(function(err) {
-									response.errors.address = "Payment method is invalid";
+									response.errors.shippingOptions = "Invalid shipping option";
 									reject(response);
 								});
 								
 							}).catch(function(err) {
-								response.errors.address = "Shipping address is invalid";
+								response.errors.address = "Payment method is invalid";
 								reject(response);
 							});
+							
 						}).catch(function(err) {
-							response.errors.invalidCustomer = "Customer is invalid";
+							response.errors.address = "Shipping address is invalid";
 							reject(response);
 						});
-		
-					} else {
-						// Normal customer checkout
-					}	
+					}).catch(function(err) {
+						response.errors.invalidCustomer = "Customer is invalid";
+						reject(response);
+					});
+					
 				} else {
 					reject(response);
 				}
