@@ -3,8 +3,8 @@ var request = require('request');
 var router = express.Router();
 
 /* URLs for consumed APIs */
-var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu:5000/";
-var ACCOUNTING_BASE_URL = "http://vm343e.se.rit.edu/";
+var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/";
+var ACCOUNTING_BASE_URL = "http://vm343e.se.rit.edu";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
