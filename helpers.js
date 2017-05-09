@@ -378,31 +378,53 @@ module.exports = {
 	
 	sendEmail: function(phoneModel) {
 		return new Promise(function(resolve, reject) {
-			var emails = ["nns3455@rit.edu"];
-			
-			var transporter = nodemailer.createTransport({
-				"service" : "gmail",
-				"auth" : {
-					"user" : "krutzcorpsales@gmail.com",
-					"pass" : "Team$ales"
+			var emails = [];
+			models.Item.findAll({
+				where: {
+					modelId : parseInt(phoneModel)
+				},
+				include: [
+					{
+						"all":true,
+						"nested":true
+					}
+				]
+			}).then(function(items) {
+				var emails = [];
+				items.forEach(function(item) {
+					var email = item.order.customer.email;
+					if (emails.indexOf(email) < 0) {
+						emails.push(email);
+					}
+				});
+				
+				if (emails.length > 0) {
+					var transporter = nodemailer.createTransport({
+						"service" : "gmail",
+						"auth" : {
+							"user" : "krutzcorpsales@gmail.com",
+							"pass" : "Team$ales"
+						}
+					});
+					
+					var mailOptions = {
+						"from" : '"KrutzCorp Sales" <krutzcorpsales@gmail.com>',
+						"to" : emails.join(),
+						"subject" : "Phone Recall",
+						"text" : "We recalled your phone, hit dat mufukin like button",
+						"html" : "<h1>We recalled your phone, hit surbscrib and SMASH dat mufukin like button</h1>"
+					};
+					
+					transporter.sendMail(mailOptions, (error, info) => {
+						if (error) {
+							return console.log(error);
+						}
+						console.log("Messages sent successfully");
+					});
 				}
+				
+				resolve();
 			});
-			
-			var mailOptions = {
-				"from" : '"KrutzCorp Sales" <krutzcorpsales@gmail.com>',
-				"to" : emails.join(),
-				"subject" : "Phone Recall",
-				"text" : "We recalled your phone, hit dat mufukin like button",
-				"html" : "<h1>We recalled your phone, hit surbscrib and SMASH dat mufukin like button</h1>"
-			};
-			
-			transporter.sendMail(mailOptions, (error, info) => {
-				if (error) {
-					return console.log(error);
-				}
-				console.log("Messages sent successfully");
-			});
-			resolve();
 		});
 	}
 }

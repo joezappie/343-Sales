@@ -112,7 +112,7 @@ router.post('/ordertest', function(req, res, next) {
 router.post('/recall', function(req, res, next) {
 	var phoneModel = req.body.phoneModel;
 	request(INVENTORY_BASE_URL + 'recall/' + phoneModel, function (error, response, body) {
-		helpers.sendEmail(1).then(function() {
+		helpers.sendEmail(phoneModel).then(function() {
 			res.render('pages/recallForm');
 		});
 	});
