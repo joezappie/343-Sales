@@ -21,6 +21,9 @@ models.TaxRates = require("./models/taxrates.js");
 models.Address.belongsTo(models.Customer, { as: 'customer', onDelete: 'CASCADE', foreignKey: { name: 'customerId', allowNull: false }});
 models.Address.belongsTo(models.TaxRates, { as: 'state', onDelete: 'CASCADE', foreignKey: { name: 'stateId', allowNull: false }});
 
+models.Customer.hasMany(models.Address, { as: 'shippingAddress', foreignKey: 'customerId' });
+models.Customer.hasMany(models.Address, { as: 'billingAddress', foreignKey: 'customerId' });
+
 // Orders Relations
 models.Orders.belongsTo(models.Customer, { as: 'customer', onDelete: 'CASCADE', foreignKey: { name: 'customerId', allowNull: false }});
 models.Orders.belongsTo(models.Address, { as: 'shippingAddress', onDelete: 'CASCADE', foreignKey: { name: 'shippingAddressId', allowNull: false }});
