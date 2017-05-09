@@ -18,6 +18,8 @@ module.exports = db.define('customer', {
 	},
     phoneNumber:  { type: Sequelize.STRING(20), allowNull: false},
     company: {type: Sequelize.STRING(50) },
+	firstName: { type: Sequelize.STRING, allowNull: false},
+    lastName: { type: Sequelize.STRING, allowNull: false},
   },
   //Start class settings
   {timestamps: false, freezeTableName: true, tableName: 'Customer',
@@ -29,5 +31,5 @@ module.exports = db.define('customer', {
     getFullname : function () {
       return [this.firstName, this.lastName].join(' ');
     }
-  },
+  }
 });

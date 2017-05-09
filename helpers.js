@@ -4,6 +4,7 @@ var nodemailer = require('nodemailer');
 var request = require('request');
 
 var INVENTORY_BASE_URL = "http://vm343b.se.rit.edu/";
+var ACCOUNTING_BASE_URL = "http://accounting.krutz.site/";
 var MIN_BUSINESS_QUANTITY = 100;
 var BUSINESS_DISCOUNT = 0.1;
 var RETURN_PERIOD = 30;
@@ -119,7 +120,9 @@ module.exports = {
 						"password": "",
 						"phoneNumber": info.phone,
 						"email": info.email,
-						"company": null
+						"company": null,
+						"firstName": info.billing_first_name,
+						"lastName": info.billing_last_name,
 					}
 					
 					if(info.hasOwnProperty("company")) {
@@ -337,11 +340,30 @@ module.exports = {
 										
 										// Run query to create items
 										models.Item.bulkCreate(orderItems).then(function() {
-											response.success = true;
-											response.order = orderResult;
-											response.customer = customer;
-											response.items = orderItems.length;
-											resolve(response);
+											
+											// Let accounting know we made a sale
+											request({
+												url: ACCOUNTING_BASE_URL + "sale",
+												method: 'POST',
+												json: {
+													"preTaxAmount": totalCost, 
+													"taxAmount": totalCost * billingResults.billingAddress.state.rate, 
+													"transactionType": "Deposit", 
+													"salesID": orderResult.id
+												}
+											}, function (error, res, body) {
+												if (!error && res.statusCode == 200) {
+													response.success = true;
+													response.order = orderResult;
+													response.customer = customer;
+													response.items = orderItems.length;
+													resolve(response);
+												} else {
+													response.errors.accounting = "Failed to deposit money";
+													resolve(response);
+												}
+											});
+
 										}).catch(function(err) {
 											response.errors.address = "Couldn't place order";
 											reject(response);
