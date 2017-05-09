@@ -214,17 +214,36 @@ module.exports = {
 				var totalCost = 0;
 				var totalQuantity = 0;
 				
-				// Calculate the total order price and check that all the phones selected are valid
-				if(info.hasOwnProperty("phone_model")) {
-					info.phone_model.forEach(function(val, index) {
-						if(typeof phoneModels[index] !== 'undefined') {
-							var quanity = parseInt(val.quantity);
-							totalCost += phoneModels[index].price * quanity;
-							totalQuantity += quanity;
-						} else {
-							response.errors.invalidPhone = "An invalid phone was selected.";
+				var orderedPhoneInfo = [];
+				
+				function getPhoneById(id) {
+					for(var key in phoneModels) {
+						var phone = phoneModels[key];
+						if(phone.id == id) {
+							return phone;
 						}
-					});
+					}
+				}
+
+				// Check that all of the ordered phones from the form are valid
+				if(info.hasOwnProperty("phone_model")) {
+					for(var key in info.phone_model) {
+						var phoneId = parseInt(key.split("_").pop());
+						var phoneInfo = {
+							model: getPhoneById(phoneId),
+							quantity: parseInt(info.phone_model[key])
+						}
+						
+						// Calculate the total cost/quantity
+						if(phoneInfo.model == null) {
+							response.errors.invalidPhone = "An invalid phone was selected.";
+						} else {
+							totalCost += phoneInfo.model.price * phoneInfo.quantity;
+							totalQuantity += phoneInfo.quantity;
+						}
+						
+						orderedPhoneInfo.push(phoneInfo);
+					}
 				}
 				
 
@@ -320,16 +339,23 @@ module.exports = {
 										var orderItems = [];
 										
 										// Create the actual items
-										info.phone_model.forEach(function(val, index) {
-											// Create order item for each phone
-											for(var x = 0; x < val.quantity; x++) {
-												// TODO: get a new serial number
-												var deadline = new Date();
-												deadline.setDate(deadline.getDate() + RETURN_PERIOD);
+										// Calculate the total cost/quantity
+										orderedPhoneInfo.forEach(function(item) {
+											var deadline = new Date();
+											deadline.setDate(deadline.getDate() + RETURN_PERIOD);
+											
+											var price = item.model.price;
+											
+											// Apply business discount
+											if(isBusiness) {
+												price = item.model.price - (item.model.price * BUSINESS_DISCOUNT);
+											}
+												
+											for(var x = 0; x < item.quantity; x++) {
 												orderItems.push({
 													serialNumber: 1,
-													modelId: index,
-													price: phoneModels[index].price - (phoneModels[index].price * BUSINESS_DISCOUNT),
+													modelId: item.model.id,
+													price: price,
 													isPaid: true,
 													replacementDeadline: deadline,
 													refundDeadline: deadline,
@@ -341,17 +367,20 @@ module.exports = {
 										// Run query to create items
 										models.Item.bulkCreate(orderItems).then(function() {
 											
+											var accountingRequest = {
+												"preTaxAmount": totalCost, 
+												"taxAmount": totalCost * billingResults.billingAddress.state.rate, 
+												"transactionType": "Deposit", 
+												"salesID": orderResult.id
+											}
+											
 											// Let accounting know we made a sale
 											request({
 												url: ACCOUNTING_BASE_URL + "sale",
 												method: 'POST',
-												json: {
-													"preTaxAmount": totalCost + shippingOptions.price, 
-													"taxAmount": totalCost * billingResults.billingAddress.state.rate, 
-													"transactionType": "Deposit", 
-													"salesID": orderResult.id
-												}
+												json: accountingRequest
 											}, function (error, res, body) {
+												response.accounting = accountingRequest;
 												response.http = {"response": res, "body": body};
 												response.success = true;
 												response.order = orderResult;

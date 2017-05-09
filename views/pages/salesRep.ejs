@@ -137,7 +137,7 @@ function onCustomerSelected() {
 								<%= phoneModel.description %>
 								<div class="secondary-content">
 									<label><%= '$' + phoneModel.price %></label>
-									<input onblur="findTotal()" id="phoneCount" value=0 name="phone_model[<%= phoneModel.id %>][quantity]" type="text" class="validate phoneCount"/><br>
+									<input onblur="findTotal()" id="phoneCount" value=0 name="phone_model[id_<%= phoneModel.id %>]" type="text" class="validate phoneCount"/><br>
 								</div>
 								<div style='clear:both;'></div>
 							</li>
