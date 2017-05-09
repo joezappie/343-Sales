@@ -59,64 +59,50 @@ var shippingOptions = [{name:"Free", price: 0},{name:"Economy", price: 3.99},{na
 models.ShippingCosts.bulkCreate(shippingOptions).then(function(result) {});
 
 function generateCustomer(data) {
-	models.Customer.create(data).then(function(result) {
-	customer = {"model": result.dataValues, "addresses": [], "paymentMethods": [], "orders": []};
+	console.log(data);
 	
-	var addressInfo = {
-		firstName: data.firstName,
-		lastName: data.lastName,
-		city: cities[Math.floor(Math.random()*cities.length)],
-		zip: Math.floor(Math.random()*90000) + 10000,
-		address: (Math.floor(Math.random()*500) + 1).toString() + " " + roads[Math.floor(Math.random()*roads.length)],
-		customerId: customer.model.id,
-		stateId: taxRates[Math.floor(Math.random()*taxRates.length)].id,
-	}
-	
-	models.Address.create(addressInfo).then(function(result) {
-		var address = result.dataValues;
+	models.Customer.create(data).then(function(customer) {
 		
-		var paymentMethodInfo = {
-			cardNumber: generateCCnumber(),
-			CVC: (Math.floor(Math.random()*999) + 100).toString(),
-			expirationDate: (Math.floor(Math.random()*1704067200) + 1514764800),
-			billingAddressId: address.id,
+		var addressInfo = {
+			firstName: data.firstName,
+			lastName: data.lastName,
+			city: cities[Math.floor(Math.random()*cities.length)],
+			zip: Math.floor(Math.random()*90000) + 10000,
+			address: (Math.floor(Math.random()*500) + 1).toString() + " " + roads[Math.floor(Math.random()*roads.length)],
+			customerId: customer.id,
+			stateId: taxRates[Math.floor(Math.random()*taxRates.length)].id,
 		}
 		
-		models.PaymentMethod.create(paymentMethodInfo).then(function(result) {
-			var paymentMethod = result.dataValues;
+		models.Address.create(addressInfo).then(function(address) {
 			
-			promises = [];
-			
-			// Add random number of orders
-			while(Math.random() < 0.5) {
-				promises.push(
-					new Promise(function(resolve, reject) {
-						var orderInfo = {
-							totalItemCost: (Math.floor(Math.random()*200000) + 10000) / 100,
-							shippingCost: 3.99,
-							orderDate: (Math.floor(Math.random()*1514764800) + 1420070400),
-							isPaid: Math.random() < 0.8,
-							taxPercentage: Math.floor(Math.random() * 12) / 100,
-							customerId: customer.model.id,
-							shippingAddressId: address.id,
-							paymentMethodId: paymentMethod.id,
-						}
-						
-						models.Orders.create(orderInfo).then(function(result) {
-							customer.orders.push(result.dataValues);
-							resolve(result.dataValues);
-						});
-					})
-				);
+			var paymentMethodInfo = {
+				cardNumber: generateCCnumber(),
+				CVC: (Math.floor(Math.random()*999) + 100).toString(),
+				expirationDate: (Math.floor(Math.random()*1704067200) + 1514764800),
+				billingAddressId: address.id,
 			}
 			
-			Promise.all(promises).then(function() {
+			models.PaymentMethod.create(paymentMethodInfo).then(function(paymentMethod) {
+				
 				promises = [];
-
-				var chanceOfItem = 1;
-				while(Math.random() < chanceOfItem && customer.orders.length > 0) {
-					promises.push(
-						new Promise(function(resolve, reject) {
+				
+				// Add random number of orders
+				while(Math.random() < 0.5) {
+					var orderInfo = {
+						totalItemCost: (Math.floor(Math.random()*200000) + 10000) / 100,
+						shippingCost: 3.99,
+						orderDate: (Math.floor(Math.random()*1514764800) + 1420070400),
+						isPaid: Math.random() < 0.8,
+						taxPercentage: Math.floor(Math.random() * 12) / 100,
+						customerId: customer.id,
+						shippingAddressId: address.id,
+						paymentMethodId: paymentMethod.id,
+					}
+					
+					models.Orders.create(orderInfo).then(function(order) {
+						var chanceOfItem = 1;
+						while(Math.random() < chanceOfItem) {
+						
 							var data = {
 								serialNumber: serialNumber++,
 								modelId: phoneModels[Math.floor(Math.random()*phoneModels.length)],
@@ -124,25 +110,20 @@ function generateCustomer(data) {
 								isPaid: Math.random() < 0.8,
 								replacementDeadline: (Math.floor(Math.random()*1514764800) + 1420070400),
 								refundDeadline: (Math.floor(Math.random()*1514764800) + 1420070400),
-								orderId: customer.orders[Math.floor(Math.random()*customer.orders.length)].id
+								orderId: order.id
 							}
 							
 							models.Item.create(data).then(function(result) {
-								resolve(result.dataValues);
+								
 							});
-						})
-					);
-					
-					chanceOfItem -= .3;
+							
+							chanceOfItem -= .3;
+						}
+					});
 				}
-				
-				Promise.all(promises).then(function() {
-					console.log("Done Generating Order Items");
-				});
 			});
 		});
 	});
-});
 }
 
 function generateCCnumber() {
