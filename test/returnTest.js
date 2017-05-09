@@ -15,7 +15,7 @@ describe('Return', function() {
 		it('should successfully process a return', function(done) {
 			chai.request(server)
 				.post('/api/return')
-				.send({ replace: false, orderId: 1, serialIds: [20, 21] })
+				.send({ replace: false, orderId: 1, serialIds: [120133] })
 				.end(function(error, response) {
 					response.should.have.status(200);
 					response.should.be.json;
@@ -33,7 +33,8 @@ describe('Return', function() {
 								price: 'number',
 								status: 'string',
 								replaceDeadline: 'string',
-								refundDeadline: 'string'
+								refundDeadline: 'string',
+								modelId: 'string'
 							});
 						});
 					}

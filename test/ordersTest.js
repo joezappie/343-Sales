@@ -199,7 +199,7 @@ describe('Orders', function() {
 				});
 		});
 
-		it('should return orders with the given shipping address zipcode', function(done) {
+		it('should return orders with the given shipping address', function(done) {
 			models.Address.findById(testOrder.shippingAddressId).then(function(shippingAddress) {
 				chai.request(server)
 					.get('/api/order/search')
@@ -219,7 +219,7 @@ describe('Orders', function() {
 			});
 		});
 
-		it('should return orders with the given billing address zipcode', function(done) {
+		it('should return orders with the given billing address', function(done) {
 			models.PaymentMethod.findById(testOrder.paymentMethodId).then(function(paymentMethod) {
 				models.Address.findById(paymentMethod.billingAddressId).then(function(billingAddress) {
 					chai.request(server)

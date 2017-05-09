@@ -1,6 +1,7 @@
 var express = require('express');
-
 var router = express.Router();
+
+var models = require(__base + 'models.js');
 
 // Mock database for orders
 var db = [
@@ -57,64 +58,38 @@ function callbackhandler(err, results) {
 
 router.post('/', function(req, res, next) {
 	var replace, orderId, serialIds;
-	
+
 	replace = req.body.replace;
 	orderId = req.body.orderId;
 	serialIds = req.body.serialIds;
 
-	if (replace === null || replace === undefined || !orderId || !serialIds) {
-		res.status("400").send("Missing required parameters");
+	if (replace === null || replace === undefined || !orderId || !serialIds || serialIds.length < 1) {
+		res.status("400").json({ error: "Missing required parameters" });
 	}
 
-	var dbcalls = [];
+	var refundValue = replace === 'true' || replace === true ? 0 : 1;
 
-	/*
-	if (replace == 'true') {
-		serialIds.forEach(function(item, index) {
-			dbcalls.push(function(callback) {
-				db.query("INSERT INTO Item (orderId, serialNumber, modelId, price, status, replacementDeadline, refundDeadline) VALUES (" + orderId + ", '" + item + "', 2, 10, 'Replacement', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)", function(err, rows, fields, res) {
-					if (err) console.log("Failed to submit query for serialId: " + item);
-					callback(err);
+	models.Item.update({ refunded: refundValue }, { where: { serialNumber: serialIds }})
+		.spread(function(affectedCount, affectedRows) {
+			return models.Item.findAll({ where: { serialNumber: serialIds }})
+				.then(function(items) {
+					var responseItems = items.map(function(orderItem) {
+						var item = orderItem.dataValues;
+						var status = item.refunded === null || item.refunded === undefined ? 'original' : 'return';
+						return {
+							serialId: item.serialNumber,
+							price: item.price,
+							replaceDeadline: item.replacementDeadline,
+							refundDeadline: item.refundDeadline,
+							modelId: item.modelId,
+							bogoSerialNumber: item.bogoSerialNumber,
+							status: item.refunded === 1 ? status : 'replace'
+						};
+					});
+
+					return res.status(200).json({ orderId: orderId, items: responseItems });
 				});
-			});
 		});
-	}
-
-	async.series(dbcalls, function(err) {
-		db.query("SELECT * FROM Item", function(err, rows) {
-			console.log("test");
-			console.log(rows);
-			res.json(rows);
-		});
-	});*/
-	serialIds.forEach(function(item, index) {
-		var found = false;
-		db.forEach(function(dbitem, dbindex) {
-			if (!found) {
-				if (dbitem['serialId'] == item && dbitem['status'] != "Returned") {
-					found = true;
-					if (replace == 'true') {
-						db.push({
-							"orderId" : dbitem['orderId'],
-							"serialId": item,
-							"price": dbitem['price'],
-							"status": "Replacement",
-							"replaceDeadline": dbitem['replaceDeadline'],
-							"refundDeadline": dbitem['refundDeadline']
-						});
-					} else {
-						dbitem['status'] = "Returned";
-					}
-				}
-			}
-		});
-		if (!found) {
-			res.status("400").send("Invalid serialId: " + item);
-		}
-	});
-
-	res.json(db);
-
 });
 
 module.exports = router;
