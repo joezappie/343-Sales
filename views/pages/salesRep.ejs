@@ -20,6 +20,10 @@ function findTotal() {
 
 <script type="text/javascript">
 $(document).ready(function() {
+	authenticateToken(null, function() {
+		window.location = '/?unauthenticated=true';
+	});
+
 	$("#post-btn").click(function() {
 		$("#errors").hide();
 		$.post("api/order/placeBusinessOrder", $("#post-form").serialize(), function( response ) {
@@ -31,37 +35,37 @@ $(document).ready(function() {
 			} else if(response.hasOwnProperty("errors")) {
 				var errors = $("#errors");
 				errors.html("");
-			
+
 				for(var index in response.errors) {
 					errors.append("<div>" + response.errors[index] + "</div>");
 				};
 				errors.show();
 			}
-			
+
 			$(window).scrollTop(0);
-			
+
 		}, "json");
-			
+
 		event.preventDefault();
 	});
-	
+
 	$("#custs").on("change", onCustomerSelected);
 });
 
 function onCustomerSelected() {
 	var customerId = parseInt($("#custs").val());
-	
+
 	if(isNaN(customerId)) {
 		$("#businessInfo").hide();
 	} else {
 		$("#businessInfo").show();
-		
+
 		var shippingOptions = $("#shippingOptions");
 		shippingOptions.html("");
-		
+
 		var paymentOptions = $("#paymentOptions");
 		paymentOptions.html("");
-		
+
 		// Load their shipping address
 		$.get("api/customer/getShipping?customer=" + customerId, function( response ) {
 			$(response).each(function(index) {
@@ -69,7 +73,7 @@ function onCustomerSelected() {
 				shippingOptions.append("<option value='" + response[index].id + "'>" + address.firstName + " " + address.lastName + " | " + address.address + " " + address.city + ", " + address.state.state + ", " + address.zip + "</option>");
 			});
 		}, "json");
-		
+
 		// Load their billing options
 		$.get("api/customer/getPayments?customer=" + customerId, function( response ) {
 			$(response).each(function(index) {
@@ -103,9 +107,9 @@ function onCustomerSelected() {
 							<a class="btn-floating btn-small waves-effect waves-light red" href="/newCustomer"><i class="material-icons">add</i></a>
 						</div>
 					</div>
-					
+
 					<div id='businessInfo' style='display:none;'>
-					
+
 						<label style="font-size:1em;color:#000000;">Choose Shipping</label>
 						<div class="row">
 							<div class="input-field col s6">
@@ -121,7 +125,7 @@ function onCustomerSelected() {
 						</div>
 
 						<div class='sectionSpacer'></div>
-						
+
 					</div>
 
 					<label style="font-size:1.5rem;color:#000000;">Choose Phone Models</label>
@@ -150,7 +154,7 @@ function onCustomerSelected() {
 					<button class="btn waves-effect waves-light" id="post-btn" type="submit">Place Order
 						<i class="material-icons right">send</i>
 					</button>
-	
+
 				</form>
 			</div>
 		</div>

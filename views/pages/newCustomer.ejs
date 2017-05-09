@@ -8,7 +8,7 @@
 		<%- include employee-navbar.ejs %>
 		<div class='container topSpacing'>
 			<script>
-			
+
 				function useBillingInfo()
 				{
 					//set shipping to billing
@@ -25,14 +25,17 @@
 					//redraw labels so they don't overlap with text
 					Materialize.updateTextFields()
 				}
-				
+
 				$(document).ready(function() {
+					authenticateToken(null, function() {
+						window.location = '/?unauthenticated=true';
+					});
 
 					$("select").material_select();
 
 					$( "#createCustomer" ).submit(function( event ) {
 						$("#createCustomer .invalid").removeClass("invalid");
-						
+
 						$.post("/api/customer/create", $("#createCustomer").serialize(), function( response ) {
 							console.log(response);
 							if(response.hasOwnProperty("success") && response.success) {
@@ -42,25 +45,25 @@
 							} else if(response.hasOwnProperty("errors")) {
 								for(var input in response.errors) {
 									var element = $("#" + input);
-									
+
 									if(element.is("select")) {
 										element = element.siblings("input");
 									}
-									
+
 									element.addClass("invalid");
 									element.siblings("label").attr("data-error", response.errors[input]);
 								};
 							}
-							
+
 							$(window).scrollTop(0);
 						}, "json");
-						
+
 						event.preventDefault();
 					});
 
 				});
 			</script>
-			
+
 			<div class="w3-container">
 				<div class="row">
 					<form id='createCustomer' class="col s12" method="POST" action="">
@@ -109,7 +112,7 @@
 									<option value="10">10 - October</option>
 									<option value="11">11 - November</option>
 									<option value="12">12 - December</option>
-							  </select> 
+							  </select>
 							  <label for="expiration_month">Expiration Date</label>
 							</div>
 							<div class="input-field col s1">
