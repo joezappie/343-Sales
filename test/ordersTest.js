@@ -11,9 +11,9 @@ var should = chai.should();
 chai.use(chaiHttp);
 
 describe('Orders', function() {
-	// before(function() {
-	// 	testUtils.mockDB();
-	// });
+	before(function(done) {
+		
+	});
 
 	describe('GET /order', function() {
 		it('should return 400 error for not providing orderId', function(done) {
