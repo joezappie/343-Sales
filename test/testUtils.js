@@ -3,6 +3,25 @@ var chai = require('chai');
 var expect = chai.expect;
 var should = chai.should();
 
+// var mock = require('mock-require');
+
+// var dbTest = require("../databaseTest.js");
+
+// var mockDB = function() {
+// 	console.log('mock dbbbb');
+// 	console.log(dbTest);
+// 	/***************************************
+// 	 * CREATE THE DATABASE
+// 	 **************************************/
+// 	dbTest.sync({ force: true });
+// 	mock('db', dbTest);
+//
+// 	var server = require('../server.js');
+// 	return server;
+//
+// 	// require('../generateData.js');
+// };
+
 /**
  * Verify the given object has the correct properties and property types
  *
@@ -19,5 +38,5 @@ var verifyProperties = function(obj, properties) {
 };
 
 module.exports = {
-	verifyProperties
+	verifyProperties,
 };

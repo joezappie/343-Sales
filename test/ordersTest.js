@@ -11,6 +11,10 @@ var should = chai.should();
 chai.use(chaiHttp);
 
 describe('Orders', function() {
+	// before(function() {
+	// 	testUtils.mockDB();
+	// });
+
 	describe('GET /order', function() {
 		it('should return 400 error for not providing orderId', function(done) {
 			chai.request(server)
@@ -26,6 +30,7 @@ describe('Orders', function() {
 				.get('/api/order')
 				.query({ orderId: 1 })
 				.end(function(error, response) {
+					console.log(response);
 					response.should.have.status(200);
 					response.should.be.json;
 					response.body.should.have.property('orders');

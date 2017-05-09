@@ -3,7 +3,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha"
+    "test": "NODE_ENV=test mocha",
+		"initTestDb": "NODE_ENV=test node ./dbinit.js",
+		"generateTestDbData": "NODE_ENV node ./generateData.js"
   },
   "dependencies": {
     "async": "~2.0.0",
@@ -15,11 +17,12 @@
     "sequelize": "~3.30.4",
     "sqlite3": "^3.1.8",
     "validator": "~7.0.0",
-	"nodemailer": "~4.0.0"
+    "nodemailer": "~4.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "mock-require": "^2.0.2"
   }
 }
