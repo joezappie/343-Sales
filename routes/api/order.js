@@ -92,11 +92,11 @@ router.get('/search', function(req,res,next){
 	}
 	
 	if(req.param('firstName')) {
-		where.customer.firstName = {like: "%" + req.param('firstName') + "%"};
+		where.address.firstName = {like: "%" + req.param('firstName') + "%"};
 	}
 	
 	if(req.param('lastName')) {
-		where.customer.lastName = {like: "%" + req.param('lastName') + "%"};
+		where.address.lastName = {like: "%" + req.param('lastName') + "%"};
 	}
 	
 	var orderSearch = generateOrderSearch(where, req.param('billingAddress'));
