@@ -3,10 +3,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node ./bin/www",
-    "test": "NODE_ENV=test mocha",
-		"customerTests": "NODE_ENV=test mocha test/customerTest.js",
-		"initTestDb": "NODE_ENV=test node ./dbinit.js",
-		"generateTestDbData": "NODE_ENV=test node ./generateData.js"
+		"initTestDb": "NODE_ENV=test node ./dbinit.js && NODE_ENV=test node ./generateData.js pleaseGiveMeOrders",
+		"test": "npm run initTestDb && NODE_ENV=test mocha && rm salesTest.sql",
+		"customerTests": "npm run initTestDb && NODE_ENV=test mocha test/customerTest.js && rm salesTest.sql",
+		"orderTests": "npm run initTestDb && NODE_ENV=test mocha test/ordersTest.js && rm salesTest.sql"
   },
   "dependencies": {
     "async": "~2.0.0",

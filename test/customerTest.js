@@ -9,48 +9,14 @@ var testUtils = require('./testUtils');
 var expect = chai.expect;
 var should = chai.should();
 
-var testCustomers = [];
-
 chai.use(chaiHttp);
 
 describe('Customers', function() {
 
 	// create two customers for testing
 	before(function(done) {
-		var customer1 = {
-			"password": "",
-			"phoneNumber": '5555555555',
-			"email": 'person@verizon.com',
-			"company": 'Verizon',
-			"firstName": 'Hello',
-			"lastName": 'Kitty'
-		};
-
-		models.Customer.create(customer1).then(function(customer) {
-			testCustomers.push(customer);
-
-			var customer2 = {
-				"password": "",
-				"phoneNumber": '5555555555',
-				"email": 'mickey@gmail.com',
-				"company": null,
-				"firstName": 'Mickey',
-				"lastName": 'Mouse'
-			};
-
-			models.Customer.create(customer2).then(function(customer2) {
-				testCustomers.push(customer2);
-				done();
-			});
-		});
-	});
-
-	// remove test customers
-	after(function(done) {
-		testCustomers[0].destroy().then(function() {
-			testCustomers[1].destroy().then(function() {
-				done();
-			});
+		testUtils.createCustomers().then(function() {
+			done();
 		});
 	});
 
@@ -130,11 +96,11 @@ describe('Customers', function() {
 		});
 
 		it('should return the correct customers searched by phone number', function(done) {
-			var testPhoneNum = '5555555555';
+			var testPhoneNum = '508-555-5555';
 
 			chai.request(server)
 				.get('/api/customer')
-				.query({ phone: testPhoneNum })
+				.query({ phoneNumber: testPhoneNum })
 				.end(function(error, response) {
 					response.should.have.status(200);
 					response.should.be.json;
