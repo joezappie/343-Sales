@@ -8,32 +8,32 @@ var router = express.Router();
 var orders = {};
 
 router.get('/', function(req,res,next){
-	
+
 	res.type('json');
 
 	var where = {order: {}};
-	
+
 	var orderId = parseInt(req.param('orderId'));
 	
 	if(!isNaN(orderId)) {
 		where.order.id = parseInt(req.param('orderId'));
 	} else {
-		res.status(400).send('400 Bad request: invalid parameters');
+		res.status(400).json({ error: '400 Bad request: invalid parameters' });
 		return;
 	}
-	
+
 	var orderSearch = generateOrderSearch(where);
-	
-	models.Orders.findOne(orderSearch).then(function(order) { 
+
+	models.Orders.findOne(orderSearch).then(function(order) {
 		res.json(order);
 	}).catch(function(err) {
 		res.json({error: err});
-	});  
-	
+	});
+
 });
 
 router.post('/placeOrder', function(req,res,next) {
-	
+
 	helpers.createCustomer(req.body).then(function(customerResponse) {
 		req.body.customer = customerResponse.customer.id;
 		req.body.payment = customerResponse.payment.id;
@@ -45,7 +45,7 @@ router.post('/placeOrder', function(req,res,next) {
 			var response = Object.assign(customerResponse, orderResponse);
 			res.json(response);
 		});
-		
+
 	}).catch(function(response) {
 		res.json(response);
 	});
@@ -61,22 +61,22 @@ router.post('/placeBusinessOrder', function(req,res,next) {
 
 router.get('/search', function(req,res,next){
 	res.type('json');
-	
+
 	var where = {order: {}, customer: {}, address: {}, };
 	var searchBillingAddress = false;
-		
+
 	if(req.param('customerId') != null) {
 		where.order.customerId = parseInt(req.param('customerId'));
 	}
-	
+
 	if(req.param('city')) {
 		where.address.city = {like: "%" + req.param('city') + "%"};
 	}
-	
+
 	if(req.param('zipCode')) {
 		where.address.zip = req.param('zipCode');
 	}
-	
+
 	if(req.param('address')) {
 		var addressParts = [];
 		req.param('address').split(" ").forEach(function(value, index) {
@@ -84,24 +84,24 @@ router.get('/search', function(req,res,next){
 		});
 		where.address.address = {$or: addressParts};
 	}
-	
+
 	if(req.param('state')) {
 		where.state = {
 			state: {like: "%" + req.param('state') + "%"}
 		}
 	}
-	
+
 	if(req.param('firstName')) {
 		where.customer.firstName = {like: "%" + req.param('firstName') + "%"};
 	}
-	
+
 	if(req.param('lastName')) {
 		where.customer.lastName = {like: "%" + req.param('lastName') + "%"};
 	}
-	
+
 	var orderSearch = generateOrderSearch(where, req.param('billingAddress'));
-	
-	models.Orders.findAll(orderSearch).then(function(orders) { 
+
+	models.Orders.findAll(orderSearch).then(function(orders) {
 		res.json(orders);
 	}).catch(function(err) {
 		res.json({error: err});
@@ -113,7 +113,7 @@ function generateOrderSearch(where, searchBillingAddress) {
 		where: where.order,
 		attributes: { exclude: ['shippingAddressId', 'paymentMethodId', 'customerId'] },
 		include: [
-			{ 
+			{
 				model: models.Address,
 				as: 'shippingAddress',
 				attributes: { exclude: ['stateId'] },

@@ -3,6 +3,7 @@ process.env.NODE_ENV = 'test';
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var server = require('../server');
+var models = require(__base + 'models.js');
 var testUtils = require('./testUtils');
 
 var expect = chai.expect;
@@ -10,7 +11,16 @@ var should = chai.should();
 
 chai.use(chaiHttp);
 
+var testOrder;
+
 describe('Orders', function() {
+	before(function(done) {
+		models.Orders.findById(1).then(function(order) {
+			testOrder = order.dataValues;
+			done();
+		});
+	});
+
 	describe('GET /order', function() {
 		it('should return 400 error for not providing orderId', function(done) {
 			chai.request(server)
@@ -28,55 +38,58 @@ describe('Orders', function() {
 				.end(function(error, response) {
 					response.should.have.status(200);
 					response.should.be.json;
-					response.body.should.have.property('orders');
 
-					var orders = response.body.orders;
-					orders.should.be.a('array');
-					expect(orders).to.have.lengthOf(1);
-					expect(orders[0].id).to.equal(1);
-
-					var order = orders[0];
+					var order = response.body;
+					order.should.be.a('object');
+					expect(order.id).to.equal(1);
 
 					testUtils.verifyProperties(order, {
-						customerId: 'number',
-						repId: 'number',
-						cost: 'number',
+						id: 'number',
+						totalItemCost: 'number',
+						shippingCost: 'number',
 						orderDate: 'string',
 						isPaid: 'boolean',
-						taxPercentage: 'number'
+						taxPercentage: 'number',
+						shippingAddress: 'object',
+						paymentMethod: 'object',
+						customer: 'object',
+						items: 'array'
 					});
-
-					order.should.not.have.property('billingInfo');
-					order.should.not.have.property('shippingInfo');
-					order.should.not.have.property('customerInfo');
-					order.should.not.have.property('items');
 
 					done();
 				});
 		});
 
-		it('should return the correct order with billing info', function(done) {
+		it('should return the correct order with payment info', function(done) {
 			chai.request(server)
 				.get('/api/order')
-				.query({ orderId: 1, billingInfo: 'true' })
+				.query({ orderId: 1 })
 				.end(function(error, response) {
 					response.should.have.status(200);
 
-					var orders = response.body.orders;
-					orders.should.be.a('array');
-					expect(orders).to.have.lengthOf(1);
-					expect(orders[0].id).to.equal(1);
+					var order = response.body;
+					order.should.be.a('object');
+					expect(order.id).to.equal(1);
 
-					var order = orders[0];
+					order.should.have.property('paymentMethod');
 
-					order.should.have.property('billingInfo');
-					testUtils.verifyProperties(order.billingInfo, {
+					testUtils.verifyProperties(order.paymentMethod, {
+						id: 'number',
+						CVC: 'string',
+						expirationDate: 'string',
+						billingAddressId: 'number',
+						cardNumber: 'string'
+					});
+
+					testUtils.verifyProperties(order.paymentMethod.billingAddress, {
+						id: 'number',
+						customerId: 'number',
 						firstName: 'string',
 						lastName: 'string',
 						address: 'string',
 						city: 'string',
 						zip: 'string',
-						state: 'string'
+						state: 'object'
 					});
 
 					done();
@@ -86,52 +99,50 @@ describe('Orders', function() {
 		it('should return the correct order with customer info', function(done) {
 			chai.request(server)
 				.get('/api/order')
-				.query({ orderId: 1, customerInfo: 'true' })
+				.query({ orderId: 1 })
 				.end(function(error, response) {
 					response.should.have.status(200);
 
-					var orders = response.body.orders;
-					orders.should.be.a('array');
-					expect(orders).to.have.lengthOf(1);
-					expect(orders[0].id).to.equal(1);
+					var order = response.body;
+					order.should.be.a('object');
+					expect(order.id).to.equal(1);
 
-					var order = orders[0];
-
-					order.should.have.property('customerInfo');
-					testUtils.verifyProperties(order.customerInfo, {
-						customerId: 'number',
+					order.should.have.property('customer');
+					testUtils.verifyProperties(order.customer, {
+						id: 'number',
 						firstName: 'string',
 						lastName: 'string',
 						email: 'string',
-						phone: 'string'
+						phoneNumber: 'string'
 					});
+
+					testCustomerId = order.customer.id;
 
 					done();
 				});
 		});
 
-		it('should return the correct order with shipping info', function(done) {
+		it('should return the correct order with shipping address', function(done) {
 			chai.request(server)
 				.get('/api/order')
 				.query({ orderId: 1, shippingInfo: 'true' })
 				.end(function(error, response) {
 					response.should.have.status(200);
 
-					var orders = response.body.orders;
-					orders.should.be.a('array');
-					expect(orders).to.have.lengthOf(1);
-					expect(orders[0].id).to.equal(1);
+					var order = response.body;
+					order.should.be.a('object');
+					expect(order.id).to.equal(1);
 
-					var order = orders[0];
-
-					order.should.have.property('shippingInfo');
-					testUtils.verifyProperties(order.shippingInfo, {
+					order.should.have.property('shippingAddress');
+					testUtils.verifyProperties(order.shippingAddress, {
+						id: 'number',
+						customerId: 'number',
 						firstName: 'string',
 						lastName: 'string',
 						address: 'string',
 						city: 'string',
 						zip: 'string',
-						state: 'string'
+						state: 'object'
 					});
 
 					done();
@@ -145,22 +156,21 @@ describe('Orders', function() {
 				.end(function(error, response) {
 					response.should.have.status(200);
 
-					var orders = response.body.orders;
-					orders.should.be.a('array');
-					expect(orders).to.have.lengthOf(1);
-					expect(orders[0].id).to.equal(1);
-
-					var order = orders[0];
+					var order = response.body;
+					order.should.be.a('object');
+					expect(order.id).to.equal(1);
 
 					order.should.have.property('items');
 					order.items.should.be.a('array');
 
 					order.items.forEach(function(item) {
 						testUtils.verifyProperties(item, {
-							serialId: 'number',
+							id: 'number',
+							serialNumber: 'number',
+							orderId: 'number',
+							modelId: 'string',
 							price: 'number',
-							status: 'string',
-							replaceDeadline: 'string',
+							replacementDeadline: 'string',
 							refundDeadline: 'string'
 						});
 					});
@@ -174,15 +184,15 @@ describe('Orders', function() {
 		it('should return orders with the given customerId', function(done) {
 			chai.request(server)
 				.get('/api/order/search')
-				.query({ customerId: 1 })
+				.query({ customerId: testOrder.customerId })
 				.end(function(error, response) {
 					response.should.have.status(200);
 
-					var orders = response.body.orders;
+					var orders = response.body;
 					orders.should.be.a('array');
 
 					orders.forEach(function(order) {
-						expect(order.customerId).to.equal(1);
+						expect(order.customer.id).to.equal(testOrder.customerId);
 					});
 
 					done();
@@ -190,55 +200,46 @@ describe('Orders', function() {
 		});
 
 		it('should return orders with the given shipping address', function(done) {
-			var testAddress = 'john doe 1111 street Rochester NY 14568';
+			models.Address.findById(testOrder.shippingAddressId).then(function(shippingAddress) {
+				chai.request(server)
+					.get('/api/order/search')
+					.query({ zipCode: shippingAddress.zip, billingAddress: null })
+					.end(function(error, response) {
+						response.should.have.status(200);
 
-			chai.request(server)
-				.get('/api/order/search')
-				.query({ address: testAddress, shippingInfo: 'true' })
-				.end(function(error, response) {
-					response.should.have.status(200);
+						var orders = response.body;
+						orders.should.be.a('array');
 
-					var orders = response.body.orders;
-					orders.should.be.a('array');
+						orders.forEach(function(order) {
+							expect(order.shippingAddress.zip).to.equal(shippingAddress.zip);
+						});
 
-					orders.forEach(function(order) {
-						var shippingInfo = order.shippingInfo;
-						expect(testAddress).to.contain(shippingInfo.firstName);
-						expect(testAddress).to.contain(shippingInfo.lastName);
-						expect(testAddress).to.contain(shippingInfo.address);
-						expect(testAddress).to.contain(shippingInfo.city);
-						expect(testAddress).to.contain(shippingInfo.state);
-						expect(testAddress).to.contain(shippingInfo.zip);
+						done();
 					});
+			});
+		});
 
-					done();
+		it('should return orders with the given billing address', function(done) {
+			models.PaymentMethod.findById(testOrder.paymentMethodId).then(function(paymentMethod) {
+				models.Address.findById(paymentMethod.billingAddressId).then(function(billingAddress) {
+					chai.request(server)
+						.get('/api/order/search')
+						.query({ address: billingAddress.zip, billingAddress: 'true' })
+						.end(function(error, response) {
+							response.should.have.status(200);
+
+							var orders = response.body;
+							orders.should.be.a('array');
+
+							orders.forEach(function(order) {
+								var returnedAddress = order.paymentMethod.billingAddress;
+								expect(returnedAddress.zip).to.equal(billingAddress.zip);
+							});
+
+							done();
+						});
+					});
 				});
 		});
-	});
-
-	it('should return orders with the given billing address', function(done) {
-		var testAddress = 'john doe 1111 street Rochester NY 14568';
-
-		chai.request(server)
-			.get('/api/order/search')
-			.query({ billingAddress: testAddress, billingInfo: 'true' })
-			.end(function(error, response) {
-				response.should.have.status(200);
-
-				var orders = response.body.orders;
-				orders.should.be.a('array');
-
-				orders.forEach(function(order) {
-					var billingInfo = order.billingInfo;
-					expect(testAddress).to.contain(billingInfo.firstName);
-					expect(testAddress).to.contain(billingInfo.lastName);
-					expect(testAddress).to.contain(billingInfo.address);
-					expect(testAddress).to.contain(billingInfo.city);
-					expect(testAddress).to.contain(billingInfo.state);
-					expect(testAddress).to.contain(billingInfo.zip);
-				});
-
-				done();
-			});
 	});
 });

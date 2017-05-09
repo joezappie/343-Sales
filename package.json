@@ -3,7 +3,11 @@
   "main": "server.js",
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha"
+		"initTestDb": "NODE_ENV=test node ./dbinit.js && NODE_ENV=test node ./generateData.js pleaseGiveMeOrders",
+		"test": "npm run initTestDb && NODE_ENV=test mocha && rm salesTest.sql",
+		"customerTests": "npm run initTestDb && NODE_ENV=test mocha test/customerTest.js && rm salesTest.sql",
+		"orderTests": "npm run initTestDb && NODE_ENV=test mocha test/ordersTest.js && rm salesTest.sql",
+		"returnTests": "npm run initTestDb && NODE_ENV=test mocha test/returnTest.js && rm salesTest.sql"
   },
   "dependencies": {
     "async": "~2.0.0",
@@ -15,7 +19,7 @@
     "sequelize": "~3.30.4",
     "sqlite3": "^3.1.8",
     "validator": "~7.0.0",
-	"nodemailer": "~4.0.0"
+    "nodemailer": "~4.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

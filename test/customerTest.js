@@ -3,6 +3,7 @@ process.env.NODE_ENV = 'test';
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var server = require('../server');
+var models = require(__base + 'models.js');
 var testUtils = require('./testUtils');
 
 var expect = chai.expect;
@@ -11,9 +12,17 @@ var should = chai.should();
 chai.use(chaiHttp);
 
 describe('Customers', function() {
+
+	// create two customers for testing
+	before(function(done) {
+		testUtils.createCustomers().then(function() {
+			done();
+		});
+	});
+
 	describe('GET /customer', function() {
 		it('should return the correct customers searched by firstName', function(done) {
-			var testName = 'John';
+			var testName = 'Hello';
 
 			chai.request(server)
 				.get('/api/customer')
@@ -21,21 +30,22 @@ describe('Customers', function() {
 				.end(function(error, response) {
 					response.should.have.status(200);
 					response.should.be.json;
-					response.body.should.have.property('customers');
 
-					var customers = response.body.customers;
+					var customers = response.body;
 					customers.should.be.a('array');
 
 					customers.forEach(function(customer) {
 						testUtils.verifyProperties(customer, {
-							customerId: 'number',
+							id: 'number',
 							firstName: 'string',
 							lastName: 'string',
 							email: 'string',
-							phone: 'string'
+							phoneNumber: 'string',
+							company: 'string'
 						});
 
 						expect(customer.firstName).to.equal(testName);
+						expect(customer.company).to.equal('Verizon');
 					});
 
 					done();
@@ -43,7 +53,7 @@ describe('Customers', function() {
 		});
 
 		it('should return the correct customers searched by lastName', function(done) {
-			var testName = 'doe';
+			var testName = 'Mouse';
 
 			chai.request(server)
 				.get('/api/customer')
@@ -51,13 +61,13 @@ describe('Customers', function() {
 				.end(function(error, response) {
 					response.should.have.status(200);
 					response.should.be.json;
-					response.body.should.have.property('customers');
 
-					var customers = response.body.customers;
+					var customers = response.body;
 					customers.should.be.a('array');
 
 					customers.forEach(function(customer) {
 						expect(customer.lastName).to.equal(testName);
+						expect(customer.company).to.equal(null);
 					});
 
 					done();
@@ -65,7 +75,7 @@ describe('Customers', function() {
 		});
 
 		it('should return the correct customers searched by email', function(done) {
-			var testEmail = 'therealjoe@joemail.com';
+			var testEmail = 'mickey@gmail.com';
 
 			chai.request(server)
 				.get('/api/customer')
@@ -73,9 +83,8 @@ describe('Customers', function() {
 				.end(function(error, response) {
 					response.should.have.status(200);
 					response.should.be.json;
-					response.body.should.have.property('customers');
 
-					var customers = response.body.customers;
+					var customers = response.body;
 					customers.should.be.a('array');
 
 					customers.forEach(function(customer) {
@@ -87,21 +96,21 @@ describe('Customers', function() {
 		});
 
 		it('should return the correct customers searched by phone number', function(done) {
-			var testPhoneNum = '1231231234';
+			var testPhoneNum = '508-555-5555';
 
 			chai.request(server)
 				.get('/api/customer')
-				.query({ phone: testPhoneNum })
+				.query({ phoneNumber: testPhoneNum })
 				.end(function(error, response) {
 					response.should.have.status(200);
 					response.should.be.json;
-					response.body.should.have.property('customers');
 
-					var customers = response.body.customers;
+					var customers = response.body;
 					customers.should.be.a('array');
+					expect(customers.length).to.equal(2);
 
 					customers.forEach(function(customer) {
-						expect(customer.phone).to.equal(testPhoneNum);
+						expect(customer.phoneNumber).to.equal(testPhoneNum);
 					});
 
 					done();
