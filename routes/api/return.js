@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
+var request = require('request');
 
 var models = require(__base + 'models.js');
+var helpers = require(__base + 'helpers.js');
 
 // Mock database for orders
 var db = [
@@ -85,6 +87,17 @@ router.post('/', function(req, res, next) {
 							bogoSerialNumber: item.bogoSerialNumber,
 							status: item.refunded === 1 ? status : 'replace'
 						};
+					});
+
+					responseItems.forEach(function(item) {
+						request({
+							url: helpers.INVENTORY_BASE_URL + "phone/return/" + item.serialId,
+							method: 'POST'
+						}, function (error, res, body) {
+							if (error) {
+								console.log(error);
+							}
+						});
 					});
 
 					return res.status(200).json({ orderId: orderId, items: responseItems });
