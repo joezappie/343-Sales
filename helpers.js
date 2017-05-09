@@ -346,22 +346,18 @@ module.exports = {
 												url: ACCOUNTING_BASE_URL + "sale",
 												method: 'POST',
 												json: {
-													"preTaxAmount": totalCost, 
+													"preTaxAmount": totalCost + shippingOptions.price, 
 													"taxAmount": totalCost * billingResults.billingAddress.state.rate, 
 													"transactionType": "Deposit", 
 													"salesID": orderResult.id
 												}
 											}, function (error, res, body) {
-												if (!error && res.statusCode == 200) {
-													response.success = true;
-													response.order = orderResult;
-													response.customer = customer;
-													response.items = orderItems.length;
-													resolve(response);
-												} else {
-													response.errors.accounting = "Failed to deposit money";
-													resolve(response);
-												}
+												response.http = {"response": res, "body": body};
+												response.success = true;
+												response.order = orderResult;
+												response.customer = customer;
+												response.items = orderItems.length;
+												resolve(response);
 											});
 
 										}).catch(function(err) {
@@ -400,53 +396,31 @@ module.exports = {
 	
 	sendEmail: function(phoneModel) {
 		return new Promise(function(resolve, reject) {
-			var emails = [];
-			models.Item.findAll({
-				where: {
-					modelId : parseInt(phoneModel)
-				},
-				include: [
-					{
-						"all":true,
-						"nested":true
-					}
-				]
-			}).then(function(items) {
-				var emails = [];
-				items.forEach(function(item) {
-					var email = item.order.customer.email;
-					if (emails.indexOf(email) < 0) {
-						emails.push(email);
-					}
-				});
-				
-				if (emails.length > 0) {
-					var transporter = nodemailer.createTransport({
-						"service" : "gmail",
-						"auth" : {
-							"user" : "krutzcorpsales@gmail.com",
-							"pass" : "Team$ales"
-						}
-					});
-					
-					var mailOptions = {
-						"from" : '"KrutzCorp Sales" <krutzcorpsales@gmail.com>',
-						"to" : emails.join(),
-						"subject" : "Phone Recall",
-						"text" : "We recalled your phone, hit dat mufukin like button",
-						"html" : "<h1>We recalled your phone, hit surbscrib and SMASH dat mufukin like button</h1>"
-					};
-					
-					transporter.sendMail(mailOptions, (error, info) => {
-						if (error) {
-							return console.log(error);
-						}
-						console.log("Messages sent successfully");
-					});
+			var emails = ["nns3455@rit.edu"];
+			
+			var transporter = nodemailer.createTransport({
+				"service" : "gmail",
+				"auth" : {
+					"user" : "krutzcorpsales@gmail.com",
+					"pass" : "Team$ales"
 				}
-				
-				resolve();
 			});
+			
+			var mailOptions = {
+				"from" : '"KrutzCorp Sales" <krutzcorpsales@gmail.com>',
+				"to" : emails.join(),
+				"subject" : "Phone Recall",
+				"text" : "We recalled your phone, hit dat mufukin like button",
+				"html" : "<h1>We recalled your phone, hit surbscrib and SMASH dat mufukin like button</h1>"
+			};
+			
+			transporter.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					return console.log(error);
+				}
+				console.log("Messages sent successfully");
+			});
+			resolve();
 		});
 	}
 }
